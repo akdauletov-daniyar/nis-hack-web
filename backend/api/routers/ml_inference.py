@@ -50,11 +50,13 @@ async def predict_air_quality(file: UploadFile = File(...)):
     except Exception as exc:
         raise HTTPException(status_code=400, detail=f"Failed to parse CSV: {exc}") from exc
 
-    model = _get_air_quality_model()
     try:
+        model = _get_air_quality_model()
         predictions = model.predict(df)
+    except HTTPException:
+        raise
     except Exception as exc:
-        raise HTTPException(status_code=400, detail=f"Prediction error: {exc}") from exc
+        raise HTTPException(status_code=500, detail=f"Model error: {exc}") from exc
 
     results = predictions.to_dict(orient="records")
     return {
