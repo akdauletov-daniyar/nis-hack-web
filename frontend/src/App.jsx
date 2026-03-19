@@ -15,6 +15,13 @@ import LandingPage from './pages/LandingPage';
 import Settings from './pages/Settings';
 import Profile from './pages/Profile';
 
+// Model Page Imports
+import AirQualityModel from './pages/models/AirQualityModel';
+import DataPreprocessing from './pages/models/DataPreprocessing';
+import GeoAIAccessibility from './pages/models/GeoAIAccessibility';
+import IntegrationService from './pages/models/IntegrationService';
+import TrafficModel from './pages/models/TrafficModel';
+
 const Unauthorized = () => (
   <div className="min-h-screen flex items-center justify-center bg-gray-50">
     <div className="text-center">
@@ -47,6 +54,11 @@ function App() {
           {/* Public Routes Wrapped in Layout */}
           <Route element={<Layout />}>
             <Route path="/" element={<LandingPage />} />
+            <Route path="/models/air-quality" element={<AirQualityModel />} />
+            <Route path="/models/data-preprocessing" element={<DataPreprocessing />} />
+            <Route path="/models/geoai-accessibility" element={<GeoAIAccessibility />} />
+            <Route path="/models/integration-service" element={<IntegrationService />} />
+            <Route path="/models/traffic-model" element={<TrafficModel />} />
           </Route>
 
           {/* Protected Dashboard Routes Wrapped in Layout */}

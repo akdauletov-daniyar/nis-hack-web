@@ -2,29 +2,51 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
-import { Map, ListChecks, BellRing, BarChart3, Users, ShieldAlert, Award, FileText, Settings, LogOut, Info, Sun, Moon, User } from 'lucide-react';
+import { Map, ListChecks, BellRing, BarChart3, Users, ShieldAlert, Award, FileText, Settings, LogOut, Info, Sun, Moon, User, Brain, Wind, FilterX, Accessibility, Plug, Car } from 'lucide-react';
 
 const Navbar = () => {
   const { user, role, signOut } = useAuth();
   const { effectiveTheme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showModelsDropdown, setShowModelsDropdown] = useState(false);
   const dropdownRef = useRef(null);
+  const modelsDropdownRef = useRef(null);
+  const modelsTimeoutRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setShowDropdown(false);
       }
+      if (modelsDropdownRef.current && !modelsDropdownRef.current.contains(event.target)) {
+        setShowModelsDropdown(false);
+      }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const handleModelsEnter = () => {
+    if (modelsTimeoutRef.current) clearTimeout(modelsTimeoutRef.current);
+    setShowModelsDropdown(true);
+  };
+  const handleModelsLeave = () => {
+    modelsTimeoutRef.current = setTimeout(() => setShowModelsDropdown(false), 200);
+  };
+
   const handleSignOut = async () => {
     await signOut();
     navigate('/login');
   };
+
+  const modelLinks = [
+    { to: '/models/air-quality', label: 'Air Quality Model', icon: Wind },
+    { to: '/models/data-preprocessing', label: 'Data Preprocessing', icon: FilterX },
+    { to: '/models/geoai-accessibility', label: 'GeoAI Accessibility', icon: Accessibility },
+    { to: '/models/integration-service', label: 'Integration Service', icon: Plug },
+    { to: '/models/traffic-model', label: 'Traffic Model', icon: Car },
+  ];
 
   const commonLinks = [
     { to: '/dashboard', label: 'My Hub', icon: Map, roles: ['citizen', 'volunteer', 'emergency', 'government', 'admin'] }
@@ -41,7 +63,7 @@ const Navbar = () => {
   const governmentLinks = [
     { to: '/government', label: 'City Analytics', icon: BarChart3, roles: ['government', 'admin'] }
   ];
-  const adminLinks = []; // Trigger HMR
+  const adminLinks = [];
 
   const allLinks = [
     ...commonLinks,
@@ -92,6 +114,35 @@ const Navbar = () => {
 
           <div className="flex items-center space-x-6 relative ml-4">
 
+            {/* AI Models Hover Dropdown */}
+            <div
+              className="relative"
+              ref={modelsDropdownRef}
+              onMouseEnter={handleModelsEnter}
+              onMouseLeave={handleModelsLeave}
+            >
+              <button className="text-sm font-bold text-dark hover:text-primary transition-colors flex items-center gap-1.5 hidden sm:flex">
+                <Brain size={16} /> AI Models
+              </button>
+              {showModelsDropdown && (
+                <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-gray-900 rounded-xl shadow-[0_4px_20px_rgb(0,0,0,0.1)] border border-gray-100 dark:border-gray-800 py-2 z-50 animate-in fade-in slide-in-from-top-2">
+                  {modelLinks.map((ml) => {
+                    const MIcon = ml.icon;
+                    return (
+                      <Link
+                        key={ml.to}
+                        to={ml.to}
+                        onClick={() => setShowModelsDropdown(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary transition-colors"
+                      >
+                        <MIcon size={16} className="text-primary" />
+                        {ml.label}
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
 
             {user ? (
               <>

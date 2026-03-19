@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from api.routers import alerts, ecology, routes, users
+from api.routers import alerts, ecology, routes, users, ml_inference
 
 # Initialize FastAPI application
 app = FastAPI(
@@ -29,6 +29,7 @@ app.include_router(users.router, prefix="/api/users", tags=["Users"])
 app.include_router(routes.router, prefix="/api/routes", tags=["Routes"])
 app.include_router(alerts.router, prefix="/api/alerts", tags=["Emergency Alerts"])
 app.include_router(ecology.router, prefix="/api/ecology", tags=["Air Quality"])
+app.include_router(ml_inference.router, prefix="/api/ml", tags=["ML Inference"])
 
 @app.get("/")
 def read_root():

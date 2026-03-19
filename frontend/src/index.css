@@ -2,8 +2,8 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --color-primary: #5308ce; /* main-accent */
-  --color-primary-alt: #3558f3; /* secondary-accent */
+  --color-primary: #f56029; /* main-accent */
+  --color-primary-alt: #e04e1a; /* secondary-accent */
   --color-secondary: #f56029; /* accent-2 */
   
   --color-dark: #080808; 
