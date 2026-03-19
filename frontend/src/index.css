@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #5308ce; /* main-accent */
+  --color-primary-alt: #3558f3; /* secondary-accent */
+  --color-secondary: #f56029; /* accent-2 */
+  --color-dark: #080808; /* main-text */
+  --color-light: #ffffff; /* main */
+  
+  --font-sans: 'Inter', system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-light);
+    color: var(--color-dark);
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
