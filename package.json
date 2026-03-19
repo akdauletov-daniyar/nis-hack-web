@@ -1,0 +1,14 @@
+{
+  "name": "nis-hack-web",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "concurrently -n FRONTEND,BACKEND -c cyan,magenta \"npm --prefix frontend run dev\" \"npm run dev:backend\"",
+    "dev:backend": "cd backend && if [ -f \".venv/bin/activate\" ]; then . .venv/bin/activate; elif [ -f \"venv/bin/activate\" ]; then . venv/bin/activate; fi; python3 -c \"import fastapi, uvicorn, httpx, pydantic_settings, supabase\" >/dev/null 2>&1 || python3 -m pip install fastapi uvicorn httpx pydantic-settings supabase; PORT=8000; while lsof -i TCP:$PORT -sTCP:LISTEN >/dev/null 2>&1; do PORT=$((PORT+1)); done; echo \"Starting backend on port $PORT\"; uvicorn main:app --reload --port $PORT",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "install:frontend": "npm --prefix frontend install"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
