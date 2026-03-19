@@ -13,6 +13,7 @@ import EmergencyDashboard from './pages/dashboards/EmergencyDashboard';
 import GovernmentDashboard from './pages/dashboards/GovernmentDashboard';
 import LandingPage from './pages/LandingPage';
 import Settings from './pages/Settings';
+import Profile from './pages/Profile';
 
 const Unauthorized = () => (
   <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -55,6 +56,7 @@ function App() {
               
               <Route path="/citizen" element={<CitizenDashboard />} />
               <Route path="/settings" element={<Settings />} />
+              <Route path="/profile" element={<Profile />} />
               
               <Route element={<ProtectedRoute allowedRoles={['volunteer', 'admin']} />}>
                 <Route path="/volunteer" element={<VolunteerDashboard />} />

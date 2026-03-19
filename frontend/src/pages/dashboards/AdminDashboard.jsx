@@ -14,6 +14,23 @@ const AdminDashboard = () => {
   });
   const [recentActivity, setRecentActivity] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [mapCenter, setMapCenter] = useState('New York, NY');
+
+  const handleLocateMap = () => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setMapCenter(`${position.coords.latitude},${position.coords.longitude}`);
+        },
+        (error) => {
+          console.error("Geolocation error:", error);
+          alert("Could not fetch location. Please ensure location services are enabled.");
+        }
+      );
+    } else {
+      alert("Geolocation is not supported by your browser.");
+    }
+  };
 
   useEffect(() => {
     const fetchMetrics = async () => {
@@ -63,8 +80,10 @@ const AdminDashboard = () => {
           </h1>
           <p className="text-gray-500 mt-2 font-medium">Real-time platform overview and incident tracking.</p>
         </div>
-        <div className="px-4 py-2 bg-primary/10 text-primary font-bold rounded-xl border border-primary/20 flex items-center gap-2">
-          <Activity size={18} className="animate-pulse" /> System Online
+        <div className="px-4 py-2 bg-green-50 text-green-600 font-bold rounded-xl border border-green-200 flex items-center gap-2">
+          <span className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse relative">
+             <span className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-75"></span>
+          </span> Platform Active
         </div>
       </header>
 
@@ -113,6 +132,13 @@ const AdminDashboard = () => {
              <span className="text-xs bg-dark text-white px-2 py-1 rounded font-bold uppercase tracking-wider">Tracking {metrics.events} Active</span>
           </div>
           <div className="flex-1 relative">
+            <button
+               onClick={handleLocateMap}
+               className="absolute z-10 bottom-6 right-6 bg-white dark:bg-gray-800 p-3 rounded-full shadow-lg text-dark dark:text-white border border-gray-100 dark:border-gray-700 hover:text-primary dark:hover:text-primary transition-all focus:outline-none hover:scale-110 flex items-center justify-center group"
+               title="Move to current location"
+            >
+               <MapPin size={22} className="group-hover:animate-bounce" />
+            </button>
             <iframe
               title="Admin Live Map Overview"
               width="100%"
@@ -121,7 +147,7 @@ const AdminDashboard = () => {
               loading="lazy"
               allowFullScreen
               referrerPolicy="no-referrer-when-downgrade"
-              src={`https://www.google.com/maps/embed/v1/place?key=${googleMapsApiKey}&q=New+York,+NY`}
+              src={`https://www.google.com/maps/embed/v1/place?key=${googleMapsApiKey}&q=${encodeURIComponent(mapCenter)}`}
             ></iframe>
           </div>
         </div>

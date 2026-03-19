@@ -5,8 +5,9 @@
   --color-primary: #5308ce; /* main-accent */
   --color-primary-alt: #3558f3; /* secondary-accent */
   --color-secondary: #f56029; /* accent-2 */
-  --color-dark: #080808; /* main-text */
-  --color-light: #ffffff; /* main */
+  
+  --color-dark: #080808; 
+  --color-light: #ffffff; 
   
   --font-sans: 'Inter', system-ui, sans-serif;
 }
@@ -19,6 +20,7 @@
     --app-text: #080808;
     --app-muted: #6b7280;
     --app-border: #f1f5f9;
+    --app-border-200: #e5e7eb;
   }
 
   html.dark {
@@ -28,6 +30,7 @@
     --app-text: #e5e7eb;
     --app-muted: #9ca3af;
     --app-border: #262626;
+    --app-border-200: #3f3f46;
   }
 
   body {
@@ -40,64 +43,24 @@
     transition: background-color 0.3s ease, color 0.3s ease;
   }
 
-  .bg-light {
-    background-color: var(--app-bg);
-  }
-  html.dark .bg-light {
-    background-color: var(--app-bg);
-  }
-
-  .bg-white {
-    background-color: var(--app-surface);
-  }
-  html.dark .bg-white {
-    background-color: var(--app-surface);
-  }
-
-  .bg-gray-50 {
-    background-color: var(--app-subtle-surface);
-  }
-  html.dark .bg-gray-50 {
-    background-color: var(--app-subtle-surface);
-  }
-
-  .text-dark {
-    color: var(--app-text);
-  }
-  html.dark .text-dark {
-    color: var(--app-text);
-  }
-
-  .border-gray-100 {
-    border-color: var(--app-border);
-  }
-  html.dark .border-gray-100 {
-    border-color: var(--app-border);
-  }
-
-  .border-gray-200 {
-    border-color: #e5e7eb;
-  }
-  html.dark .border-gray-200 {
-    border-color: #3f3f46;
-  }
-
-  .text-gray-400,
-  .text-gray-500,
-  .text-gray-600,
-  .text-gray-700 {
-    color: var(--app-muted);
-  }
-
-  html.dark .text-gray-400,
-  html.dark .text-gray-500,
-  html.dark .text-gray-600,
-  html.dark .text-gray-700 {
-    color: var(--app-muted);
-  }
-
   html.dark .shadow-gray-200 {
     --tw-shadow-color: rgb(24 24 27 / 0.6);
     --tw-shadow: var(--tw-shadow-colored);
   }
+}
+
+@layer utilities {
+  .bg-light { background-color: var(--app-bg) !important; }
+  .bg-white { background-color: var(--app-surface) !important; }
+  .bg-gray-50 { background-color: var(--app-subtle-surface) !important; }
+  
+  .border-gray-100 { border-color: var(--app-border) !important; }
+  .border-gray-200 { border-color: var(--app-border-200) !important; }
+  
+  .text-dark { color: var(--app-text) !important; }
+  
+  .text-gray-400,
+  .text-gray-500,
+  .text-gray-600,
+  .text-gray-700 { color: var(--app-muted) !important; }
 }

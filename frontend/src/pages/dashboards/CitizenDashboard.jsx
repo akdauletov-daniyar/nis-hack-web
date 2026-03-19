@@ -1,7 +1,6 @@
 import React from 'react';
 import { useAuth } from '../../context/AuthContext';
 import MapRoutingWidget from '../../components/MapRoutingWidget';
-import AIChatWidget from '../../components/AIChatWidget';
 
 const CitizenDashboard = () => {
   const { user } = useAuth();
@@ -16,7 +15,9 @@ const CitizenDashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
           <MapRoutingWidget />
-          
+        </div>
+
+        <div className="space-y-8">
           <div className="bg-white p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 flex flex-col justify-between group overflow-hidden relative">
              <div className="absolute bottom-[-20%] right-[-10%] w-64 h-64 bg-secondary opacity-10 blur-[80px] rounded-full group-hover:opacity-20 transition-opacity duration-700"></div>
             <div>
@@ -30,10 +31,6 @@ const CitizenDashboard = () => {
               <p className="text-xs text-center text-gray-400 mt-4 font-mono">Connecting to Volunteer Network...</p>
             </div>
           </div>
-        </div>
-
-        <div className="space-y-8">
-          <AIChatWidget />
         </div>
       </div>
     </div>

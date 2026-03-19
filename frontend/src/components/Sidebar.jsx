@@ -13,28 +13,22 @@ const Sidebar = () => {
   ];
 
   const citizenLinks = [
-    { to: '/citizen', label: 'Routing & Map', icon: Map, roles: ['citizen', 'volunteer', 'emergency', 'government', 'admin'] },
-    { to: '/citizen/requests', label: 'My Requests', icon: ListChecks, roles: ['citizen', 'volunteer', 'admin'] }
+    { to: '/citizen', label: 'Routing & Map', icon: Map, roles: ['citizen', 'volunteer', 'emergency', 'government', 'admin'] }
   ];
 
   const volunteerLinks = [
-    { to: '/volunteer', label: 'Volunteer Board', icon: Award, roles: ['volunteer', 'admin'] }
+    { to: '/volunteer', label: 'Volunteer Board', icon: Award, roles: ['volunteer'] }
   ];
 
   const emergencyLinks = [
-    { to: '/emergency', label: '112 Monitoring', icon: ShieldAlert, roles: ['emergency', 'admin'] },
-    { to: '/emergency/alerts', label: 'Active Alerts', icon: BellRing, roles: ['emergency', 'admin'] }
+    { to: '/emergency', label: 'Emergencies', icon: ShieldAlert, roles: ['emergency', 'admin'] }
   ];
 
   const governmentLinks = [
-    { to: '/government', label: 'City Analytics', icon: BarChart3, roles: ['government', 'admin'] },
-    { to: '/government/reports', label: 'Mobility Reports', icon: FileText, roles: ['government', 'admin'] }
+    { to: '/government', label: 'City Analytics', icon: BarChart3, roles: ['government', 'admin'] }
   ];
 
-  const adminLinks = [
-    { to: '/admin', label: 'User Management', icon: Users, roles: ['admin'] },
-    { to: '/admin/settings', label: 'Platform Settings', icon: Settings, roles: ['admin'] }
-  ];
+  const adminLinks = [];
 
   const allLinks = [
     ...commonLinks,
@@ -91,7 +85,7 @@ const Sidebar = () => {
                   `flex items-center gap-3 px-3 py-2.5 rounded-xl font-semibold transition-all duration-200 ${
                     isActive 
                       ? 'bg-primary/10 text-primary shadow-sm' 
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-dark'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-[var(--app-text)]'
                   }`
                 }
               >

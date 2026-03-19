@@ -1,18 +1,34 @@
-# OS files
+# ========================
+# OS-generated files
+# ========================
 .DS_Store
 Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~
 
+# ========================
 # Node / Frontend
+# ========================
 node_modules/
-frontend/node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-frontend/.env
-frontend/.env.*
+lerna-debug.log*
+*.log
 
-# Python caches
+# Build outputs
+dist/
+dist-ssr/
+build/
+coverage/
+*.local
+
+# ========================
+# Python
+# ========================
 __pycache__/
 *.py[cod]
 *$py.class
@@ -28,20 +44,43 @@ env/
 **/venv/
 **/env/
 
-# Environment files
+# ========================
+# Environment variables
+# ========================
 .env
 .env.*
 !.env.example
 
-# Build / test outputs
-dist/
-build/
-coverage/
+# ========================
+# Editor / IDE
+# ========================
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
-# Large ML artifacts
+# ========================
+# Large ML / binary artifacts
+# ========================
 backend/artifacts/
 ml_urban_platform/artifacts/
 *.joblib
 *.pt
 *.pth
-ml_urban_platform/.venv/
+*.h5
+*.onnx
+*.pkl
+
+# ========================
+# Misc
+# ========================
+*.tgz
+*.tar.gz
+*.zip
+.cache/
+.parcel-cache/

@@ -7,9 +7,7 @@ export const UIProvider = ({ children }) => {
   const [isSTTActive, setIsSTTActive] = useState(false);
   
   // Mock Emergency Alerts state
-  const [emergencyAlerts, setEmergencyAlerts] = useState([
-    { id: 1, type: 'critical', message: 'Accident reported on Main St. Route diverted.', time: 'Just now' }
-  ]);
+  const [emergencyAlerts, setEmergencyAlerts] = useState([]);
 
   const toggleTTS = () => {
     setIsTTSActive(prev => !prev);

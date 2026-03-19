@@ -75,7 +75,7 @@ const LandingPage = () => {
                   <h3 className="font-bold text-dark flex items-center gap-2 text-sm">
                     <Navigation size={16} className="text-primary"/> Plan Your Route
                   </h3>
-                  <button onClick={() => setIsPanelExpanded(false)} className="text-gray-400 hover:text-dark transition-colors">
+                  <button onClick={() => setIsPanelExpanded(false)} className="text-gray-400 hover:text-[var(--app-text)] transition-colors">
                     <X size={18} />
                   </button>
                 </div>
@@ -136,6 +136,13 @@ const LandingPage = () => {
 
           {/* Real Google Maps Integration */}
           <div className="absolute inset-0 z-0">
+            <button
+               onClick={handleLocate}
+               className="absolute z-10 bottom-6 right-6 bg-white dark:bg-gray-800 p-3 rounded-full shadow-lg text-dark dark:text-white border border-gray-100 dark:border-gray-700 hover:text-primary dark:hover:text-primary transition-all focus:outline-none hover:scale-110 flex items-center justify-center group"
+               title="Move to current location"
+            >
+               <MapPin size={22} className="group-hover:animate-bounce" />
+            </button>
             <iframe
               title="Google Maps Overview"
               width="100%"

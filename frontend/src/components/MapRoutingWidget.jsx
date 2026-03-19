@@ -12,7 +12,7 @@ const MapRoutingWidget = () => {
   const [routeError, setRouteError] = useState('');
   const googleMapsApiKey = getPublicEnv('VITE_GOOGLE_CLOUD_API');
 
-  useEffect(() => {
+  const handleLocateMap = () => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -23,6 +23,10 @@ const MapRoutingWidget = () => {
         }
       );
     }
+  };
+
+  useEffect(() => {
+    handleLocateMap();
   }, []);
 
   const requestAccessibleRoute = async (event) => {
@@ -116,6 +120,13 @@ const MapRoutingWidget = () => {
       </div>
 
       <div className="flex-1 bg-gray-100 relative">
+        <button
+           onClick={handleLocateMap}
+           className="absolute z-10 bottom-6 right-6 bg-white dark:bg-gray-800 p-3 rounded-full shadow-lg text-dark dark:text-white border border-gray-100 dark:border-gray-700 hover:text-primary dark:hover:text-primary transition-all focus:outline-none hover:scale-110 flex items-center justify-center group"
+           title="Move to current location"
+        >
+           <MapPin size={22} className="group-hover:animate-bounce" />
+        </button>
         <iframe
           title="Google Map"
           width="100%"
