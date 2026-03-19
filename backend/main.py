@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from api.routers import users, routes, alerts
+from api.routers import alerts, ecology, routes, users
 
 # Initialize FastAPI application
 app = FastAPI(
@@ -28,6 +28,7 @@ app.add_middleware(
 app.include_router(users.router, prefix="/api/users", tags=["Users"])
 app.include_router(routes.router, prefix="/api/routes", tags=["Routes"])
 app.include_router(alerts.router, prefix="/api/alerts", tags=["Emergency Alerts"])
+app.include_router(ecology.router, prefix="/api/ecology", tags=["Air Quality"])
 
 @app.get("/")
 def read_root():
