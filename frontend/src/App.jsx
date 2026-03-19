@@ -12,6 +12,7 @@ import AdminDashboard from './pages/dashboards/AdminDashboard';
 import EmergencyDashboard from './pages/dashboards/EmergencyDashboard';
 import GovernmentDashboard from './pages/dashboards/GovernmentDashboard';
 import LandingPage from './pages/LandingPage';
+import Settings from './pages/Settings';
 
 const Unauthorized = () => (
   <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -38,11 +39,13 @@ function App() {
     <Router>
       <AuthProvider>
         <Routes>
+          {/* Auth pages - no Layout (no navbar/footer) */}
+          <Route path="/login" element={<Auth />} />
+          <Route path="/unauthorized" element={<Unauthorized />} />
+
           {/* Public Routes Wrapped in Layout */}
           <Route element={<Layout />}>
             <Route path="/" element={<LandingPage />} />
-            <Route path="/login" element={<Auth />} />
-            <Route path="/unauthorized" element={<Unauthorized />} />
           </Route>
 
           {/* Protected Dashboard Routes Wrapped in Layout */}
@@ -51,6 +54,7 @@ function App() {
               <Route path="/dashboard" element={<RoleRouter />} />
               
               <Route path="/citizen" element={<CitizenDashboard />} />
+              <Route path="/settings" element={<Settings />} />
               
               <Route element={<ProtectedRoute allowedRoles={['volunteer', 'admin']} />}>
                 <Route path="/volunteer" element={<VolunteerDashboard />} />

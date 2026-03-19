@@ -43,8 +43,8 @@ export const AuthProvider = ({ children }) => {
         .from('profiles')
         .select('role')
         .eq('id', userId)
-        .single();
-      
+        .maybeSingle();
+
       if (data) {
         setRole(data.role);
       }
@@ -56,11 +56,23 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signIn = async (email, password) => {
+    // Intercept mock admin login for the demo evaluation
+    if (email === 'admin' && password === 'admin') {
+      const mockAdminUser = { id: 'admin-mock-id', email: 'admin' };
+      setUser(mockAdminUser);
+      setRole('admin');
+      return { data: { user: mockAdminUser }, error: null };
+    }
+    
     return supabase.auth.signInWithPassword({ email, password });
   };
 
   const signOut = async () => {
-    return supabase.auth.signOut();
+    // Always clear local state (covers mock admin and real users)
+    setUser(null);
+    setRole(null);
+    // Also sign out from Supabase for real sessions (no-op if no active session)
+    await supabase.auth.signOut();
   };
 
   return (

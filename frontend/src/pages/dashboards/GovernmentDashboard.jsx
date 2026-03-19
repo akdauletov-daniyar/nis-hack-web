@@ -1,9 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { supabase } from '../../lib/supabase';
 
 const GovernmentDashboard = () => {
   const [zone, setZone] = useState('Downtown Core');
   const [prediction, setPrediction] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [routeCount, setRouteCount] = useState(0);
+  const [volunteerCount, setVolunteerCount] = useState(0);
+
+  useEffect(() => {
+    const fetchCityMetrics = async () => {
+      try {
+        const { count: routes } = await supabase.from('reports').select('*', { count: 'exact', head: true }).eq('accessibility_related', true);
+        const { count: vols } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'volunteer');
+        setRouteCount(routes || 0);
+        setVolunteerCount(vols || 0);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchCityMetrics();
+  }, []);
 
   const pullAnalytics = async (e) => {
     e.preventDefault();
@@ -19,10 +36,13 @@ const GovernmentDashboard = () => {
     }
   };
 
+  const maxRoutes = Math.max(routeCount, 1);
+  const routePct = Math.min(Math.round((routeCount / maxRoutes) * 100), 100);
+  const volCapPct = volunteerCount > 0 ? Math.min(volunteerCount * 10, 100) : 0;
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <header className="mb-8 p-8 bg-dark rounded-3xl text-white relative overflow-hidden">
-        <div className="absolute top-[-50%] right-[-10%] w-96 h-96 bg-primary opacity-20 blur-[100px] rounded-full"></div>
         <div className="relative z-10">
           <h1 className="text-3xl font-extrabold tracking-tight mb-2">City Intelligence Hub</h1>
           <p className="text-gray-400 font-medium">AI-Driven Infrastructure & Mobility Analytics</p>
@@ -59,22 +79,19 @@ const GovernmentDashboard = () => {
           )}
         </div>
         
-        <div className="bg-white p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 relative overflow-hidden group">
+        <div className="bg-white p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 relative overflow-hidden">
           <h2 className="text-xl font-bold mb-6 text-dark flex items-center gap-2">
              <span className="w-2 h-6 bg-primary rounded block"></span>
              Live City Metrics
           </h2>
           <div className="space-y-8 mt-6">
             <div>
-              <div className="flex justify-between text-sm mb-2 font-bold"><span className="text-gray-600">Accessible Routes Active</span> <span className="text-dark">1,245</span></div>
-              <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden"><div className="bg-primary h-2 rounded-full" style={{width: '68%'}}></div></div>
+              <div className="flex justify-between text-sm mb-2 font-bold"><span className="text-gray-600">Accessible Routes Reported</span> <span className="text-dark">{routeCount.toLocaleString()}</span></div>
+              <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden"><div className="bg-primary h-2 rounded-full transition-all duration-500" style={{width: `${routePct}%`}}></div></div>
             </div>
             <div>
-              <div className="flex justify-between text-sm mb-2 font-bold"><span className="text-gray-600">Volunteer Network Capacity</span> <span className="text-dark">89%</span></div>
-              <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden"><div className="bg-primary-alt h-2 rounded-full" style={{width: '89%'}}></div></div>
-            </div>
-            <div className="pt-8 border-t border-gray-100">
-               <p className="text-xs font-mono text-gray-400 bg-gray-50 py-3 px-4 rounded-lg inline-block">System architecture executing at nominal efficiency.</p>
+              <div className="flex justify-between text-sm mb-2 font-bold"><span className="text-gray-600">Volunteer Network Size</span> <span className="text-dark">{volunteerCount}</span></div>
+              <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden"><div className="bg-primary-alt h-2 rounded-full transition-all duration-500" style={{width: `${volCapPct}%`}}></div></div>
             </div>
           </div>
         </div>

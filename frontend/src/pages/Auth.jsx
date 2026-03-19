@@ -9,6 +9,7 @@ const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState('citizen');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -21,11 +22,17 @@ const Auth = () => {
       if (isLogin) {
         const { error: signInError } = await signIn(email, password);
         if (signInError) throw signInError;
+        // Navigation is handled dynamically or user navigates to root which parses role router
         navigate('/');
       } else {
         const { error: signUpError } = await supabase.auth.signUp({
           email,
           password,
+          options: {
+            data: {
+              role: role
+            }
+          }
         });
         if (signUpError) throw signUpError;
         setError('Registration successful! Please sign in.');
@@ -39,15 +46,11 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-light py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Dynamic Background Elements */}
-      <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-primary rounded-full mix-blend-multiply filter blur-[128px] opacity-20 animate-pulse"></div>
-      <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-secondary rounded-full mix-blend-multiply filter blur-[128px] opacity-20 animate-pulse" style={{animationDelay: '2s'}}></div>
-
-      <div className="max-w-md w-full space-y-8 bg-white/60 backdrop-blur-xl p-10 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 relative z-10">
+    <div className="min-h-screen flex items-center justify-center bg-light py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100">
         <div>
           <h2 className="mt-2 text-center text-3xl font-extrabold text-dark tracking-tight">
-            {isLogin ? 'Welcome back' : 'Join Demo 1.0'}
+            {isLogin ? 'Welcome back' : 'Join Sentient'}
           </h2>
           <p className="mt-3 text-center text-sm text-gray-500">
             {isLogin ? "Don't have an account? " : "Already have an account? "}
@@ -61,30 +64,47 @@ const Auth = () => {
         </div>
         
         {error && (
-          <div className={`p-4 rounded-xl text-sm font-medium ${error.includes('successful') ? 'bg-primary/10 text-primary border border-primary/20' : 'bg-red-50 text-red-600 border border-red-100'}`}>
+          <div className={`p-4 rounded-xl text-sm font-medium ${error.includes('successful') ? 'bg-primary/5 text-primary border border-primary/20' : 'bg-red-50 text-red-600 border border-red-100'}`}>
             {error}
           </div>
         )}
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="space-y-5">
+          <div className="space-y-4">
+            {!isLogin && (
+              <div>
+                <label className="block text-sm font-bold text-dark mb-1 ml-1">Account Type</label>
+                <select
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                  className="appearance-none relative block w-full px-4 py-3 border border-gray-200 bg-white/80 text-dark font-medium rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 sm:text-sm shadow-sm"
+                >
+                  <option value="citizen">Citizen</option>
+                  <option value="government">Government / Authority</option>
+                  <option value="emergency">Rescue Service</option>
+                  <option value="volunteer">Volunteer Responder</option>
+                </select>
+              </div>
+            )}
+            
             <div>
-              <label className="block text-sm font-medium text-dark mb-1 ml-1">Email address</label>
+              <label className="block text-sm font-bold text-dark mb-1 ml-1">Email address</label>
               <input
-                type="email"
+                type="text"
                 required
-                className="appearance-none relative block w-full px-4 py-3 border border-gray-200 bg-white/50 text-dark rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 sm:text-sm"
+                className="appearance-none relative block w-full px-4 py-3 border border-gray-200 bg-white/80 text-dark rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 sm:text-sm shadow-sm"
                 placeholder="you@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
+              {/* Note: I changed type from 'email' to 'text' temporarily so that submitting 'admin' explicitly bypasses default browser email validation */}
             </div>
             <div>
-              <label className="block text-sm font-medium text-dark mb-1 ml-1">Password</label>
+              <label className="block text-sm font-bold text-dark mb-1 ml-1">Password</label>
               <input
                 type="password"
                 required
-                className="appearance-none relative block w-full px-4 py-3 border border-gray-200 bg-white/50 text-dark rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 sm:text-sm"
+                className="appearance-none relative block w-full px-4 py-3 border border-gray-200 bg-white/80 text-dark rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 sm:text-sm shadow-sm"
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
