@@ -12,9 +12,27 @@
 }
 
 @layer base {
+  :root {
+    --app-bg: #ffffff;
+    --app-surface: #ffffff;
+    --app-subtle-surface: #f8fafc;
+    --app-text: #080808;
+    --app-muted: #6b7280;
+    --app-border: #f1f5f9;
+  }
+
+  html.dark {
+    --app-bg: #0a0a0a;
+    --app-surface: #111111;
+    --app-subtle-surface: #161616;
+    --app-text: #e5e7eb;
+    --app-muted: #9ca3af;
+    --app-border: #262626;
+  }
+
   body {
-    background-color: var(--color-light);
-    color: var(--color-dark);
+    background-color: var(--app-bg);
+    color: var(--app-text);
     margin: 0;
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
@@ -22,46 +40,64 @@
     transition: background-color 0.3s ease, color 0.3s ease;
   }
 
-  .dark body,
-  html.dark body {
-    background-color: #0a0a0a;
-    color: #e5e5e5;
+  .bg-light {
+    background-color: var(--app-bg);
   }
-
   html.dark .bg-light {
-    background-color: #0a0a0a;
+    background-color: var(--app-bg);
   }
 
+  .bg-white {
+    background-color: var(--app-surface);
+  }
   html.dark .bg-white {
-    background-color: #111111;
+    background-color: var(--app-surface);
   }
 
-  html.dark .text-dark {
-    color: #e5e5e5;
+  .bg-gray-50 {
+    background-color: var(--app-subtle-surface);
   }
-
-  html.dark .border-gray-100 {
-    border-color: #1f1f1f;
-  }
-
   html.dark .bg-gray-50 {
-    background-color: #141414;
+    background-color: var(--app-subtle-surface);
   }
 
-  html.dark .text-gray-500 {
-    color: #9ca3af;
+  .text-dark {
+    color: var(--app-text);
+  }
+  html.dark .text-dark {
+    color: var(--app-text);
   }
 
-  html.dark .text-gray-400 {
-    color: #9ca3af;
+  .border-gray-100 {
+    border-color: var(--app-border);
+  }
+  html.dark .border-gray-100 {
+    border-color: var(--app-border);
   }
 
-  html.dark .text-gray-600 {
-    color: #bbb;
+  .border-gray-200 {
+    border-color: #e5e7eb;
+  }
+  html.dark .border-gray-200 {
+    border-color: #3f3f46;
   }
 
+  .text-gray-400,
+  .text-gray-500,
+  .text-gray-600,
+  .text-gray-700 {
+    color: var(--app-muted);
+  }
+
+  html.dark .text-gray-400,
+  html.dark .text-gray-500,
+  html.dark .text-gray-600,
   html.dark .text-gray-700 {
-    color: #ccc;
+    color: var(--app-muted);
+  }
+
+  html.dark .shadow-gray-200 {
+    --tw-shadow-color: rgb(24 24 27 / 0.6);
+    --tw-shadow: var(--tw-shadow-colored);
   }
 }
-

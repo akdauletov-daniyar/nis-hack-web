@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 import { Users, AlertTriangle, ShieldCheck, Activity, MapPin } from 'lucide-react';
+import { getPublicEnv } from '../../lib/env';
 
 const AdminDashboard = () => {
   const { user } = useAuth();
+  const googleMapsApiKey = getPublicEnv('VITE_GOOGLE_CLOUD_API');
   const [metrics, setMetrics] = useState({
     totalUsers: 0,
     volunteers: 0,
@@ -119,7 +121,7 @@ const AdminDashboard = () => {
               loading="lazy"
               allowFullScreen
               referrerPolicy="no-referrer-when-downgrade"
-              src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.VITE_GOOGLE_CLOUD_API}&q=New+York,+NY`}
+              src={`https://www.google.com/maps/embed/v1/place?key=${googleMapsApiKey}&q=New+York,+NY`}
             ></iframe>
           </div>
         </div>

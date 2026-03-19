@@ -50,7 +50,7 @@ const Auth = () => {
       <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100">
         <div>
           <h2 className="mt-2 text-center text-3xl font-extrabold text-dark tracking-tight">
-            {isLogin ? 'Welcome back' : 'Join Sentient'}
+            {isLogin ? 'Welcome back' : 'Join sonar'}
           </h2>
           <p className="mt-3 text-center text-sm text-gray-500">
             {isLogin ? "Don't have an account? " : "Already have an account? "}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Crosshair, MapPin, Navigation, X } from 'lucide-react';
+import { getPublicEnv } from '../lib/env';
 
 const LandingPage = () => {
   const [mapLocation, setMapLocation] = useState('Central Park, New York');
@@ -8,6 +9,7 @@ const LandingPage = () => {
   const [destination, setDestination] = useState('');
   const [isRouting, setIsRouting] = useState(false);
   const [isPanelExpanded, setIsPanelExpanded] = useState(false);
+  const googleMapsApiKey = getPublicEnv('VITE_GOOGLE_CLOUD_API');
 
   const handleLocate = () => {
     if ("geolocation" in navigator) {
@@ -38,8 +40,8 @@ const LandingPage = () => {
 
   const originParam = (origin.toLowerCase() === 'my location') ? mapLocation : origin;
   const mapSrc = (isRouting && destination) 
-    ? `https://www.google.com/maps/embed/v1/directions?key=${import.meta.env.VITE_GOOGLE_CLOUD_API}&origin=${encodeURIComponent(originParam)}&destination=${encodeURIComponent(destination)}`
-    : `https://www.google.com/maps/embed/v1/place?key=${import.meta.env.VITE_GOOGLE_CLOUD_API}&q=${encodeURIComponent(mapLocation)}`;
+    ? `https://www.google.com/maps/embed/v1/directions?key=${googleMapsApiKey}&origin=${encodeURIComponent(originParam)}&destination=${encodeURIComponent(destination)}`
+    : `https://www.google.com/maps/embed/v1/place?key=${googleMapsApiKey}&q=${encodeURIComponent(mapLocation)}`;
 
   return (
     <div className="bg-light min-h-screen pb-20 relative overflow-hidden">

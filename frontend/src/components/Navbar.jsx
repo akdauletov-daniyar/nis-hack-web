@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
-import { Map, ListChecks, BellRing, BarChart3, Users, ShieldAlert, Award, FileText, Settings, LogOut, Info } from 'lucide-react';
+import { Map, ListChecks, BellRing, BarChart3, Users, ShieldAlert, Award, FileText, Settings, LogOut, Info, Sun, Moon } from 'lucide-react';
 
 const Navbar = () => {
   const { user, role, signOut } = useAuth();
+  const { effectiveTheme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
@@ -64,8 +66,8 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-12">
           <div className="flex flex-1 items-center gap-8 overflow-x-auto no-scrollbar">
             <Link to="/" className="flex-shrink-0 flex items-center gap-2 group">
-              <img src="/app-logo.png" alt="Sentient Logo" className="w-8 h-8 object-contain group-hover:scale-105 transition-transform duration-300" />
-              <span className="text-xl font-extrabold text-dark tracking-tight hidden sm:block">Sentient</span>
+              <img src="/app-logo.png" alt="sonar Logo" className="w-8 h-8 object-contain group-hover:scale-105 transition-transform duration-300" />
+              <span className="text-xl font-extrabold text-dark tracking-tight hidden sm:block">sonar</span>
             </Link>
             
             {/* Navigation Links moved from Sidebar */}
@@ -96,6 +98,15 @@ const Navbar = () => {
           </div>
           
           <div className="flex items-center space-x-6 relative ml-4">
+            <button
+              onClick={toggleTheme}
+              className="inline-flex items-center justify-center w-9 h-9 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 hover:text-primary hover:border-primary/40 transition-colors"
+              aria-label={`Switch to ${effectiveTheme === 'dark' ? 'light' : 'dark'} mode`}
+              title={`Switch to ${effectiveTheme === 'dark' ? 'light' : 'dark'} mode`}
+            >
+              {effectiveTheme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
+
             {user ? (
               <>
                 <Link to="/about" className="text-sm font-bold text-dark hover:text-primary transition-colors hidden sm:block">About</Link>
