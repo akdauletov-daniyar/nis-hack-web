@@ -13,8 +13,7 @@ const Sidebar = () => {
   ];
 
   const citizenLinks = [
-    { to: '/citizen', label: 'Routing & Map', icon: Map, roles: ['citizen', 'volunteer', 'emergency', 'government', 'admin'] },
-    { to: '/events-map', label: 'Events Map', icon: Map, roles: ['citizen', 'volunteer', 'emergency', 'government', 'admin'] }
+    { to: '/citizen', label: 'Routing & Map', icon: Map, roles: ['citizen', 'volunteer', 'emergency', 'government', 'admin'] }
   ];
 
   const volunteerLinks = [

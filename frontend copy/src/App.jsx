@@ -12,7 +12,6 @@ import AdminDashboard from './pages/dashboards/AdminDashboard';
 import EmergencyDashboard from './pages/dashboards/EmergencyDashboard';
 import GovernmentDashboard from './pages/dashboards/GovernmentDashboard';
 import LandingPage from './pages/LandingPage';
-import EventsMap from './pages/EventsMap';
 import Settings from './pages/Settings';
 import Profile from './pages/Profile';
 
@@ -55,7 +54,6 @@ function App() {
           {/* Public Routes Wrapped in Layout */}
           <Route element={<Layout />}>
             <Route path="/" element={<LandingPage />} />
-            <Route path="/events-map" element={<EventsMap />} />
             <Route path="/models/air-quality" element={<AirQualityModel />} />
             <Route path="/models/data-preprocessing" element={<DataPreprocessing />} />
             <Route path="/models/geoai-accessibility" element={<GeoAIAccessibility />} />

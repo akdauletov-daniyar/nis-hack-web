@@ -52,8 +52,7 @@ const Navbar = () => {
     { to: '/dashboard', label: 'My Hub', icon: Map, roles: ['volunteer', 'emergency', 'government', 'admin'] }
   ];
   const citizenLinks = [
-    { to: '/citizen', label: 'Routing & Map', icon: Map, roles: ['citizen', 'volunteer', 'emergency', 'government', 'admin'] },
-    { to: '/events-map', label: 'Events Map', icon: Map, roles: ['citizen', 'volunteer', 'emergency', 'government', 'admin'] }
+    { to: '/citizen', label: 'Routing & Map', icon: Map, roles: ['citizen', 'volunteer', 'emergency', 'government', 'admin'] }
   ];
   const volunteerLinks = [
     { to: '/volunteer', label: 'Volunteer Board', icon: Award, roles: ['volunteer'] }
@@ -123,7 +122,7 @@ const Navbar = () => {
               onMouseLeave={handleModelsLeave}
             >
               <button className="text-sm font-bold text-dark hover:text-primary transition-colors flex items-center gap-1.5 hidden sm:flex">
-                <Brain size={16} /> AI Models
+                <Brain size={16} /> ML Models
               </button>
               {showModelsDropdown && (
                 <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-gray-900 rounded-xl shadow-[0_4px_20px_rgb(0,0,0,0.1)] border border-gray-100 dark:border-gray-800 py-2 z-50 animate-in fade-in slide-in-from-top-2">
@@ -144,10 +143,6 @@ const Navbar = () => {
                 </div>
               )}
             </div>
-
-            <NavLink to="/events-map" className={({ isActive }) => `text-sm font-bold transition-colors hidden sm:flex items-center gap-1.5 ${isActive ? 'text-primary' : 'text-dark hover:text-primary'}`}>
-              <Map size={16} /> Events Map
-            </NavLink>
 
             {user ? (
               <>

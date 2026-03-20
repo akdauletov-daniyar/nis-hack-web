@@ -27,11 +27,8 @@ const EmergencyDashboard = () => {
   useEffect(() => {
     fetchAlerts();
     const subscription = supabase
-      .channel('critical-events-channel')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'emergency_alerts' }, () => {
-        fetchAlerts();
-      })
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'events' }, () => {
+      .channel('alerts-channel')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'emergency_alerts' }, payload => {
         fetchAlerts();
       })
       .subscribe();
@@ -41,39 +38,8 @@ const EmergencyDashboard = () => {
 
   const fetchAlerts = async () => {
     try {
-      const { data: alertsData } = await supabase
-        .from('emergency_alerts')
-        .select('*')
-        .eq('status', 'active');
-        
-      const { data: eventsData } = await supabase
-        .from('events')
-        .select('*')
-        .eq('lifecycle', 'active')
-        .or('impact_level.eq.3,category.eq.emergency');
-
-      const combined = [];
-      
-      if (alertsData) {
-        combined.push(...alertsData.map(a => ({
-          ...a,
-          sourceType: 'alert',
-          displayTitle: a.title,
-        })));
-      }
-      
-      if (eventsData) {
-        combined.push(...eventsData.map(e => ({
-          ...e,
-          sourceType: 'event',
-          displayTitle: `${e.category === 'emergency' ? '🚨' : '⚠️'} ${e.name}`,
-        })));
-      }
-
-      // Sort by newest first
-      combined.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-      
-      setAlerts(combined);
+      const { data, error } = await supabase.from('emergency_alerts').select('*').eq('status', 'active').order('created_at', { ascending: false });
+      if (data) setAlerts(data);
     } catch (err) {
       console.error(err);
     } finally {
@@ -145,9 +111,9 @@ const EmergencyDashboard = () => {
             
             <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2">
               {alerts.length === 0 ? <p className="text-gray-500 italic">No active emergencies tracked.</p> : alerts.map(a => (
-                <div key={`${a.sourceType}-${a.id}`} className="p-5 border border-red-100 bg-red-50/50 rounded-xl flex justify-between items-center group">
+                <div key={a.id} className="p-5 border border-red-100 bg-red-50/50 rounded-xl flex justify-between items-center group">
                   <div>
-                    <h3 className="font-bold text-red-900 text-lg">{a.displayTitle || a.title}</h3>
+                    <h3 className="font-bold text-red-900 text-lg">{a.title}</h3>
                     <p className="text-sm text-red-800 mt-1">{a.description}</p>
                     <p className="text-xs text-red-600 font-mono mt-2">ID: {a.id} • {new Date(a.created_at).toLocaleString()}</p>
                   </div>
