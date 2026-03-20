@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
-from api.deps import get_supabase, get_current_user
+from api.deps import get_supabase, get_current_user, get_user_supabase
 from supabase import Client
 
 router = APIRouter()
@@ -10,23 +10,29 @@ class AlertCreate(BaseModel):
     description: str
     lat: float
     lng: float
+    metadata: dict = {}
 
 @router.post("/")
-def create_emergency_alert(alert: AlertCreate, current_user = Depends(get_current_user), supabase: Client = Depends(get_supabase)):
+def create_emergency_alert(
+    alert: AlertCreate, 
+    current_user=Depends(get_current_user), 
+    user_supabase: Client = Depends(get_user_supabase)
+):
     """
     Pushes a new emergency alert to the database.
     Real-time Supabase subscriptions will blast this to Emergency Dashboards.
     """
     data = {
-        "reporter_id": current_user.id,
+        "author_id": current_user.id,
         "title": alert.title,
         "description": alert.description,
-        "location_lat": alert.lat,
-        "location_lng": alert.lng,
+        "lat": alert.lat,
+        "lng": alert.lng,
+        "metadata": alert.metadata,
         "status": "active"
     }
     
-    response = supabase.table("emergency_alerts").insert(data).execute()
+    response = user_supabase.table("emergency_alerts").insert(data).execute()
     
     # Error checking pattern for supabase-py
     if not response.data:

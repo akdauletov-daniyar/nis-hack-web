@@ -4,7 +4,8 @@ import { useAuth } from '../../context/AuthContext';
 
 const EmergencyDashboard = () => {
   const { user } = useAuth();
-  const [alerts, setAlerts] = useState([]);
+  const [activeAlerts, setActiveAlerts] = useState([]);
+  const [dispatchedAlerts, setDispatchedAlerts] = useState([]);
   const [loading, setLoading] = useState(true);
   
   // Accident Self-report state
@@ -44,12 +45,12 @@ const EmergencyDashboard = () => {
       const { data: alertsData } = await supabase
         .from('emergency_alerts')
         .select('*')
-        .eq('status', 'active');
+        .in('status', ['active', 'dispatched']);
         
       const { data: eventsData } = await supabase
         .from('events')
         .select('*')
-        .eq('lifecycle', 'active')
+        .in('lifecycle', ['active', 'resolving'])
         .or('impact_level.eq.3,category.eq.emergency');
 
       const combined = [];
@@ -70,14 +71,42 @@ const EmergencyDashboard = () => {
         })));
       }
 
-      // Sort by newest first
       combined.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
       
-      setAlerts(combined);
+      setActiveAlerts(combined.filter(a => a.sourceType === 'alert' ? a.status === 'active' : a.lifecycle === 'active'));
+      setDispatchedAlerts(combined.filter(a => a.sourceType === 'alert' ? a.status === 'dispatched' : a.lifecycle === 'resolving'));
     } catch (err) {
       console.error(err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDispatch = async (id, sourceType) => {
+    if (window.confirm("Confirm dispatcher assignment for this emergency?")) {
+      try {
+        if (sourceType === 'alert') {
+          await supabase.from('emergency_alerts').update({ status: 'dispatched' }).eq('id', id);
+        } else {
+          await supabase.from('events').update({ lifecycle: 'resolving' }).eq('id', id);
+        }
+        fetchAlerts();
+      } catch (err) {
+        console.error("Error dispatching:", err);
+      }
+    }
+  };
+
+  const getLocation = () => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        setFormData(prev => ({
+          ...prev, 
+          location: `${position.coords.latitude.toFixed(6)}, ${position.coords.longitude.toFixed(6)}`
+        }));
+      }, (error) => {
+        alert("Failed to get location from browser.");
+      });
     }
   };
 
@@ -102,6 +131,15 @@ const EmergencyDashboard = () => {
       };
 
       const { data: { session } } = await supabase.auth.getSession();
+      
+      let lat = 45.0;
+      let lng = -12.0;
+      if (formData.location.includes(',')) {
+        const parts = formData.location.split(',');
+        lat = parseFloat(parts[0].trim()) || 45.0;
+        lng = parseFloat(parts[1].trim()) || -12.0;
+      }
+
       const res = await fetch('http://127.0.0.1:8000/api/alerts/', {
         method: 'POST',
         headers: {
@@ -111,9 +149,9 @@ const EmergencyDashboard = () => {
         body: JSON.stringify({ 
           title: `[${formData.severity}] ${formData.category} at ${formData.location || 'Unknown'}`, 
           description: formData.details || formData.category, 
-          lat: 45.0, 
-          lng: -12.0,
-          metadata: { ...formData, ...hiddenData } // Send full form data in metadata JSON payload
+          lat, 
+          lng,
+          metadata: { ...formData, ...hiddenData }
         })
       });
       if (!res.ok) throw new Error("Failed to post");
@@ -140,22 +178,42 @@ const EmergencyDashboard = () => {
           <div className="bg-white p-6 rounded-2xl shadow-sm border-t-4 border-red-500">
             <h2 className="text-xl font-bold mb-4 flex items-center gap-3">
               <span className="relative flex h-3 w-3"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span><span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span></span>
-              Active Critical Alerts ({alerts.length})
+              Active Critical Alerts ({activeAlerts.length})
             </h2>
             
             <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2">
-              {alerts.length === 0 ? <p className="text-gray-500 italic">No active emergencies tracked.</p> : alerts.map(a => (
+              {activeAlerts.length === 0 ? <p className="text-gray-500 italic">No active emergencies tracked.</p> : activeAlerts.map(a => (
                 <div key={`${a.sourceType}-${a.id}`} className="p-5 border border-red-100 bg-red-50/50 rounded-xl flex justify-between items-center group">
                   <div>
                     <h3 className="font-bold text-red-900 text-lg">{a.displayTitle || a.title}</h3>
                     <p className="text-sm text-red-800 mt-1">{a.description}</p>
-                    <p className="text-xs text-red-600 font-mono mt-2">ID: {a.id} • {new Date(a.created_at).toLocaleString()}</p>
+                    <p className="text-xs text-red-600 font-mono mt-2 flex items-center gap-2">
+                       <span>{new Date(a.created_at).toLocaleString()}</span>
+                       <span className="bg-red-200 text-red-800 px-2 py-0.5 rounded-full text-[10px] uppercase font-bold tracking-wider">{a.sourceType}</span>
+                    </p>
                   </div>
-                  <button className="px-4 py-2 bg-white text-red-700 border border-red-200 font-medium rounded shadow-sm hover:bg-red-50 transition opacity-0 group-hover:opacity-100">
+                  <button onClick={() => handleDispatch(a.id, a.sourceType)} className="px-4 py-2 bg-white text-red-700 border border-red-200 font-medium rounded shadow-sm hover:bg-red-50 transition opacity-0 group-hover:opacity-100">
                     Dispatch
                   </button>
                 </div>
               ))}
+            </div>
+          </div>
+
+          <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200">
+            <h2 className="text-lg font-bold mb-4 flex items-center gap-2 text-gray-700">
+              Dispatched / Resolving ({dispatchedAlerts.length})
+            </h2>
+            <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
+              {dispatchedAlerts.map(a => (
+                <div key={`${a.sourceType}-${a.id}`} className="p-4 border border-gray-200 bg-white rounded-xl flex justify-between items-center opacity-70">
+                  <div>
+                    <h3 className="font-bold text-gray-800">{a.displayTitle || a.title}</h3>
+                    <p className="text-xs text-gray-500 font-mono mt-1">Dispatched teams on site</p>
+                  </div>
+                </div>
+              ))}
+              {dispatchedAlerts.length === 0 && <p className="text-gray-400 italic text-sm">No recently dispatched units.</p>}
             </div>
           </div>
         </div>
@@ -190,7 +248,7 @@ const EmergencyDashboard = () => {
                     className="flex-1 px-3 py-2 border rounded-md text-sm focus:ring-red-500 focus:border-red-500" 
                     placeholder="Address, intersection, or GPS pin..." 
                   />
-                  <button type="button" className="px-3 bg-gray-100 border border-gray-300 rounded-md text-sm font-semibold hover:bg-gray-200" title="Get GPS Location">📍</button>
+                  <button type="button" onClick={getLocation} className="px-3 bg-gray-100 border border-gray-300 rounded-md text-sm font-semibold hover:bg-gray-200" title="Get GPS Location">📍</button>
                 </div>
               </div>
 
