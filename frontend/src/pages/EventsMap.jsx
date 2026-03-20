@@ -46,7 +46,7 @@ const EventsMap = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [newPinLocation, setNewPinLocation] = useState(null);
-  const [userLocation, setUserLocation] = useState({ lat: 51.1694, lng: 71.4491 }); // Astana fallback
+  const [userLocation, setUserLocation] = useState({ lat: 43.2389, lng: 76.8897 }); // Almaty default location
   const [filterCategory, setFilterCategory] = useState('');
   const [filterLifecycle, setFilterLifecycle] = useState('');
   const [showFilters, setShowFilters] = useState(false);

@@ -4,7 +4,7 @@ import { Crosshair, MapPin, Navigation, X } from 'lucide-react';
 import { getPublicEnv } from '../lib/env';
 
 const LandingPage = () => {
-  const [mapLocation, setMapLocation] = useState('Central Park, New York');
+  const [mapLocation, setMapLocation] = useState('Almaty City, Kazakhstan');
   const [origin, setOrigin] = useState('My Location');
   const [destination, setDestination] = useState('');
   const [isRouting, setIsRouting] = useState(false);

@@ -26,7 +26,7 @@ const Sidebar = () => {
   ];
 
   const governmentLinks = [
-    { to: '/government', label: 'City Analytics', icon: BarChart3, roles: ['government', 'admin'] }
+    // { to: '/government', label: 'City Analytics', icon: BarChart3, roles: ['government', 'admin'] }
   ];
 
   const adminLinks = [];

@@ -147,6 +147,11 @@ class TrafficCongestionPredictor:
     @classmethod
     def load_model(cls, model_path: str | Path) -> "TrafficCongestionPredictor":
         """Load a previously persisted predictor artifact from disk."""
+        
+        # Patch for cross-version Pickling of scikit-learn
+        import sklearn.compose._column_transformer as ct
+        if not hasattr(ct, '_RemainderColsList'):
+            ct._RemainderColsList = list
 
         artifact = joblib.load(Path(model_path))
         predictor = cls(model_backend=artifact["model_backend"])

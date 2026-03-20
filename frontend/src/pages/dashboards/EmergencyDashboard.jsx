@@ -85,14 +85,23 @@ const EmergencyDashboard = () => {
   const handleDispatch = async (id, sourceType) => {
     if (window.confirm("Confirm dispatcher assignment for this emergency?")) {
       try {
+        let updateError = null;
+        const now = new Date().toISOString();
         if (sourceType === 'alert') {
-          await supabase.from('emergency_alerts').update({ status: 'dispatched' }).eq('id', id);
+          const { error } = await supabase.from('emergency_alerts').update({ status: 'dispatched', updated_at: now }).eq('id', id);
+          updateError = error;
         } else {
-          await supabase.from('events').update({ lifecycle: 'resolving' }).eq('id', id);
+          const { error } = await supabase.from('events').update({ lifecycle: 'resolving', updated_at: now }).eq('id', id);
+          updateError = error;
         }
+
+        if (updateError) throw updateError;
+        
+        // alert("Units successfully dispatched to location.");
         fetchAlerts();
       } catch (err) {
         console.error("Error dispatching:", err);
+        alert(`Dispatch Failed: ${err.message || 'Permission denied. Ensure your database allows UPDATES.'}`);
       }
     }
   };
@@ -209,7 +218,7 @@ const EmergencyDashboard = () => {
                 <div key={`${a.sourceType}-${a.id}`} className="p-4 border border-gray-200 bg-white rounded-xl flex justify-between items-center opacity-70">
                   <div>
                     <h3 className="font-bold text-gray-800">{a.displayTitle || a.title}</h3>
-                    <p className="text-xs text-gray-500 font-mono mt-1">Dispatched teams on site</p>
+                    <p className="text-xs text-gray-500 font-mono mt-1">Dispatched at {a.updated_at ? new Date(a.updated_at).toLocaleString() : new Date(a.created_at).toLocaleString()}</p>
                   </div>
                 </div>
               ))}

@@ -6,7 +6,7 @@ const API_BASE = 'http://localhost:8000';
 const IntegrationService = () => {
   const [formData, setFormData] = useState({
     DATE_OCC: '2024-01-15', TIME_OCC: '14:30', Lat: '34.0522', Lon: '-118.2437',
-    'PT08.S1(CO)': '1200', Temperature_C: '22.5', 'RH%': '55', Wind_Speed: '3.2',
+    'PT08.S1(CO)': '1200', Temperature_C: '22.5', 'RH_%': '55', Wind_Speed: '3.2',
     'C6H6(GT)': '8.5', AQI: '75',
   });
   const [loading, setLoading] = useState(false);

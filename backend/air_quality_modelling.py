@@ -559,6 +559,11 @@ class AirQualityHybridModel:
     def load_model(cls, model_path: str | Path) -> "AirQualityHybridModel":
         """Load model artifact from disk."""
 
+        # Patch for cross-version Pickling of scikit-learn
+        import sklearn.compose._column_transformer as ct
+        if not hasattr(ct, '_RemainderColsList'):
+            ct._RemainderColsList = list
+
         artifact = joblib.load(Path(model_path))
         config: AirQualityConfig = artifact["config"]
 
