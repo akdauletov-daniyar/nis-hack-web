@@ -580,5 +580,5 @@ This project was built for the **NIS Hackathon 2026**. All rights reserved.
 ---
 
 <p align="center">
-  Built with ❤️ by the Sonar team
+  Built with ❤️ by the NIS BigManComputer team for Nis Hackathon 2026!
 </p>
