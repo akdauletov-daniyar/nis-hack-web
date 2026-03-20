@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { FilterX, Clock, Hash, Tag, ArrowRight, Upload, FileSpreadsheet, Table } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
 
 const DataPreprocessing = () => {
+  const { t } = useLanguage();
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
 
@@ -28,10 +30,10 @@ const DataPreprocessing = () => {
   ];
   const categoricalFeatures = ['Location_ID', 'Traffic_Light_State', 'Weather_Condition'];
   const temporalFeatures = [
-    { name: 'hour_sin / hour_cos', desc: 'Cyclic 24 h encoding' },
-    { name: 'day_of_week_sin / cos', desc: 'Cyclic 7-day encoding' },
-    { name: 'is_weekend', desc: 'Binary weekend flag' },
-    { name: 'is_holiday', desc: 'US Federal holiday flag' },
+    { name: 'hour_sin / hour_cos', desc: t('dp_temp1') },
+    { name: 'day_of_week_sin / cos', desc: t('dp_temp2') },
+    { name: 'is_weekend', desc: t('dp_temp3') },
+    { name: 'is_holiday', desc: t('dp_temp4') },
   ];
 
   return (
@@ -40,26 +42,26 @@ const DataPreprocessing = () => {
         <div className="flex items-center gap-3 mb-3">
           <div className="w-12 h-12 rounded-2xl bg-green-500/10 text-green-500 flex items-center justify-center"><FilterX size={24} /></div>
           <div>
-            <h1 className="text-3xl font-extrabold text-dark tracking-tight">Data Preprocessing Pipeline</h1>
-            <p className="text-gray-500 dark:text-gray-400 font-medium">Traffic Congestion Feature Engineering</p>
+            <h1 className="text-3xl font-extrabold text-dark tracking-tight">{t('dp_title')}</h1>
+            <p className="text-gray-500 dark:text-gray-400 font-medium">{t('dp_subtitle')}</p>
           </div>
         </div>
         <p className="text-gray-600 dark:text-gray-400 mt-4 leading-relaxed max-w-3xl">
-          Transforms raw traffic sensor + contextual inputs into model-ready features using sklearn pipelines.
+          {t('dp_desc')}
         </p>
       </div>
 
       {/* Upload & Preview */}
       <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 mb-8">
         <h2 className="text-lg font-bold text-dark dark:text-white flex items-center gap-2 mb-4">
-          <Upload size={20} className="text-primary" /> Preview Dataset
+          <Upload size={20} className="text-primary" /> {t('dp_preview')}
         </h2>
-        <p className="text-xs text-gray-500 mb-4">Upload a traffic CSV to preview raw data. Preprocessing runs server-side during Traffic Model inference.</p>
+        <p className="text-xs text-gray-500 mb-4">{t('dp_uploadDesc')}</p>
         <label className="cursor-pointer block">
           <div className={`border-2 border-dashed rounded-xl p-6 text-center transition-colors ${file ? 'border-primary bg-primary/5' : 'border-gray-200 dark:border-gray-700 hover:border-primary/50'}`}>
             <FileSpreadsheet size={32} className="mx-auto mb-2 text-gray-400" />
-            <p className="text-sm font-semibold text-dark dark:text-white">{file ? file.name : 'Click to select CSV'}</p>
-            <p className="text-xs text-gray-400 mt-1">{file ? `${(file.size / 1024).toFixed(1)} KB` : 'Preview first 20 rows'}</p>
+            <p className="text-sm font-semibold text-dark dark:text-white">{file ? file.name : t('aqm_clickToSelect')}</p>
+            <p className="text-xs text-gray-400 mt-1">{file ? `${(file.size / 1024).toFixed(1)} KB` : t('dp_previewRows')}</p>
           </div>
           <input type="file" accept=".csv" className="hidden" onChange={handleFile} />
         </label>
@@ -68,7 +70,7 @@ const DataPreprocessing = () => {
       {preview && (
         <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 mb-8">
           <h2 className="text-lg font-bold text-dark dark:text-white flex items-center gap-2 mb-4">
-            <Table size={20} className="text-secondary" /> Raw Data Preview ({preview.totalRows} total rows, showing first {preview.rows.length})
+            <Table size={20} className="text-secondary" /> {t('dp_rawPreview')} ({preview.totalRows} total rows, showing first {preview.rows.length})
           </h2>
           <div className="overflow-x-auto max-h-[400px] overflow-y-auto">
             <table className="text-xs min-w-full">
@@ -95,9 +97,9 @@ const DataPreprocessing = () => {
 
       {/* Pipeline Flow */}
       <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 mb-8">
-        <h2 className="text-lg font-bold text-dark dark:text-white mb-4">Pipeline Architecture</h2>
+        <h2 className="text-lg font-bold text-dark dark:text-white mb-4">{t('dp_pipelineArch')}</h2>
         <div className="flex flex-col sm:flex-row items-center gap-3 justify-center">
-          {['Raw Sensor Data', 'Temporal Extraction', 'Imputation', 'Scaling / Encoding', 'Model-Ready Matrix'].map((step, idx) => (
+          {[t('dp_step1'), t('dp_step2'), t('dp_step3'), t('dp_step4'), t('dp_step5')].map((step, idx) => (
             <React.Fragment key={step}>
               <div className="bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl px-4 py-3 text-center min-w-[140px]">
                 <p className="text-sm font-bold text-dark dark:text-white">{step}</p>
@@ -111,7 +113,7 @@ const DataPreprocessing = () => {
       {/* Temporal Features */}
       <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 mb-8">
         <h2 className="text-lg font-bold text-dark dark:text-white flex items-center gap-2 mb-4">
-          <Clock size={20} className="text-purple-500" /> Temporal Features
+          <Clock size={20} className="text-purple-500" /> {t('dp_temporalFeat')}
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {temporalFeatures.map((f) => (
@@ -126,9 +128,9 @@ const DataPreprocessing = () => {
       {/* Numeric Features */}
       <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 mb-8">
         <h2 className="text-lg font-bold text-dark dark:text-white flex items-center gap-2 mb-4">
-          <Hash size={20} className="text-blue-500" /> Numeric Features ({numericFeatures.length})
+          <Hash size={20} className="text-blue-500" /> {t('dp_numeric')} ({numericFeatures.length})
         </h2>
-        <p className="text-xs text-gray-500 mb-3">Median imputation → StandardScaler normalization</p>
+        <p className="text-xs text-gray-500 mb-3">{t('dp_numDesc')}</p>
         <div className="flex flex-wrap gap-2">
           {numericFeatures.map((f) => (
             <span key={f} className="text-xs font-mono font-semibold bg-blue-50 text-blue-600 px-2 py-1 rounded-lg border border-blue-100">{f}</span>
@@ -139,9 +141,9 @@ const DataPreprocessing = () => {
       {/* Categorical Features */}
       <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6">
         <h2 className="text-lg font-bold text-dark dark:text-white flex items-center gap-2 mb-4">
-          <Tag size={20} className="text-orange-500" /> Categorical Features ({categoricalFeatures.length})
+          <Tag size={20} className="text-orange-500" /> {t('dp_categorical')} ({categoricalFeatures.length})
         </h2>
-        <p className="text-xs text-gray-500 mb-3">Most-frequent imputation → OneHotEncoder</p>
+        <p className="text-xs text-gray-500 mb-3">{t('dp_catDesc')}</p>
         <div className="flex flex-wrap gap-2">
           {categoricalFeatures.map((f) => (
             <span key={f} className="text-xs font-mono font-semibold bg-orange-50 text-orange-600 px-2 py-1 rounded-lg border border-orange-100">{f}</span>

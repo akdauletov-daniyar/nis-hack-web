@@ -1,9 +1,11 @@
 import React from 'react';
 import { useUI } from '../context/UIContext';
 import { AlertOctagon, X } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 const EmergencyAlertsBanner = () => {
   const { emergencyAlerts, dismissAlert } = useUI();
+  const { t } = useLanguage();
 
   if (!emergencyAlerts || emergencyAlerts.length === 0) return null;
 
@@ -19,7 +21,7 @@ const EmergencyAlertsBanner = () => {
           </div>
           <div className="flex-1 pt-0.5">
             <div className="flex items-center gap-2 mb-1">
-              <h4 className="font-bold text-red-800 uppercase tracking-wider text-xs">Emergency Alert</h4>
+              <h4 className="font-bold text-red-800 uppercase tracking-wider text-xs">{t('alert_emergency')}</h4>
               <span className="text-[10px] text-red-500 font-semibold bg-red-100 px-2 py-0.5 rounded-full">{alert.time}</span>
             </div>
             <p className="text-red-900 text-sm font-medium">{alert.message}</p>

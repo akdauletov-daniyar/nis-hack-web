@@ -1,28 +1,30 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import { Map, ListChecks, BellRing, BarChart3, Users, ShieldAlert, Award, FileText, Settings, Menu, X } from 'lucide-react';
 
 const Sidebar = () => {
   const { role, user } = useAuth();
+  const { t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
 
   // Define links based on roles
   const commonLinks = [
-    { to: '/dashboard', label: 'My Hub', icon: Map, roles: ['citizen', 'volunteer', 'emergency', 'government', 'admin'] }
+    { to: '/dashboard', label: t('nav_myHub'), icon: Map, roles: ['citizen', 'volunteer', 'emergency', 'government', 'admin'] }
   ];
 
   const citizenLinks = [
-    { to: '/citizen', label: 'Routing & Map', icon: Map, roles: ['citizen', 'volunteer', 'emergency', 'government', 'admin'] },
-    { to: '/events-map', label: 'Events Map', icon: Map, roles: ['citizen', 'volunteer', 'emergency', 'government', 'admin'] }
+    { to: '/citizen', label: t('nav_routingMap'), icon: Map, roles: ['citizen', 'volunteer', 'emergency', 'government', 'admin'] },
+    { to: '/events-map', label: t('nav_eventsMap'), icon: Map, roles: ['citizen', 'volunteer', 'emergency', 'government', 'admin'] }
   ];
 
   const volunteerLinks = [
-    { to: '/volunteer', label: 'Volunteer Board', icon: Award, roles: ['volunteer'] }
+    { to: '/volunteer', label: t('nav_volunteerBoard'), icon: Award, roles: ['volunteer'] }
   ];
 
   const emergencyLinks = [
-    { to: '/emergency', label: 'Emergencies', icon: ShieldAlert, roles: ['emergency', 'admin'] }
+    { to: '/emergency', label: t('nav_emergencies'), icon: ShieldAlert, roles: ['emergency', 'admin'] }
   ];
 
   const governmentLinks = [
@@ -71,7 +73,7 @@ const Sidebar = () => {
       >
         <div className="flex-1 py-6 px-4 space-y-2 overflow-y-auto">
           <div className="mb-6 px-2">
-            <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Navigation</h2>
+            <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider">{t('sidebar_navigation')}</h2>
           </div>
           {visibleLinks.map((link) => {
             const Icon = link.icon;
@@ -104,8 +106,8 @@ const Sidebar = () => {
               {role ? role[0].toUpperCase() : 'U'}
             </div>
             <div>
-              <p className="text-sm font-bold text-dark truncate">Active Role</p>
-              <p className="text-xs text-gray-500 capitalize">{role || 'Pending'}</p>
+              <p className="text-sm font-bold text-dark truncate">{t('sidebar_activeRole')}</p>
+              <p className="text-xs text-gray-500 capitalize">{role ? t(role) : t('nav_pending')}</p>
             </div>
           </div>
         </div>

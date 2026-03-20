@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
+import { useLanguage } from '../context/LanguageContext';
 import { User, MapPin, Calendar, Edit3, Save, X, Camera } from 'lucide-react';
 
 const Profile = () => {
   const { user, role } = useAuth();
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -125,7 +127,7 @@ const Profile = () => {
           <div className="flex justify-between items-start mb-8">
             <div>
               <h1 className="text-2xl font-bold text-dark dark:text-white capitalize">
-                {profileData.name || profileData.surname ? `${profileData.name} ${profileData.surname}`.trim() : 'Anonymous User'}
+                {profileData.name || profileData.surname ? `${profileData.name} ${profileData.surname}`.trim() : t('profile_anonymous')}
               </h1>
               <p className="text-gray-500 font-medium capitalize flex items-center gap-2 mt-1">
                  <span className="w-2 h-2 rounded-full bg-green-500 inline-block"></span>
@@ -139,7 +141,7 @@ const Profile = () => {
                 onClick={() => setIsEditing(true)}
                 className="flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary-alt font-bold rounded-xl transition-colors"
               >
-                <Edit3 size={16} /> Edit Profile
+                <Edit3 size={16} /> {t('profile_edit')}
               </button>
             ) : (
               <div className="flex gap-2">
@@ -147,14 +149,14 @@ const Profile = () => {
                   onClick={() => setIsEditing(false)}
                   className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 font-bold rounded-xl transition-colors"
                 >
-                  <X size={16} /> Cancel
+                  <X size={16} /> {t('profile_cancel')}
                 </button>
                 <button 
                   onClick={handleSave}
                   disabled={saving}
                   className="flex items-center gap-2 px-4 py-2 bg-primary text-white hover:bg-primary-alt font-bold rounded-xl shadow-md transition-colors disabled:opacity-50"
                 >
-                  <Save size={16} /> {saving ? 'Saving...' : 'Save'}
+                  <Save size={16} /> {saving ? t('profile_saving') : t('save')}
                 </button>
               </div>
             )}
@@ -163,11 +165,11 @@ const Profile = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10">
             {/* Personal Details Section */}
             <div className="space-y-6">
-              <h2 className="text-lg font-bold text-gray-800 dark:text-gray-200 border-b border-gray-100 dark:border-gray-800 pb-2">Personal Information</h2>
+              <h2 className="text-lg font-bold text-gray-800 dark:text-gray-200 border-b border-gray-100 dark:border-gray-800 pb-2">{t('profile_personalInfo')}</h2>
               
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-500 mb-1">First Name</label>
+                  <label className="block text-sm font-semibold text-gray-500 mb-1">{t('profile_firstName')}</label>
                   {isEditing ? (
                     <input 
                       type="text" 
@@ -175,15 +177,15 @@ const Profile = () => {
                       value={profileData.name} 
                       onChange={handleChange}
                       className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-dark dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
-                      placeholder="e.g. John"
+                      placeholder={t('profile_egJohn')}
                     />
                   ) : (
-                    <p className="text-dark dark:text-gray-300 font-medium px-1">{profileData.name || 'Not specified'}</p>
+                    <p className="text-dark dark:text-gray-300 font-medium px-1">{profileData.name || t('profile_notSpecified')}</p>
                   )}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-500 mb-1">Last Name (Optional)</label>
+                  <label className="block text-sm font-semibold text-gray-500 mb-1">{t('profile_lastName')}</label>
                   {isEditing ? (
                     <input 
                       type="text" 
@@ -191,10 +193,10 @@ const Profile = () => {
                       value={profileData.surname} 
                       onChange={handleChange}
                       className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-dark dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
-                      placeholder="e.g. Doe"
+                      placeholder={t('profile_egDoe')}
                     />
                   ) : (
-                    <p className="text-dark dark:text-gray-300 font-medium px-1">{profileData.surname || 'Not specified'}</p>
+                    <p className="text-dark dark:text-gray-300 font-medium px-1">{profileData.surname || t('profile_notSpecified')}</p>
                   )}
                 </div>
               </div>
@@ -202,11 +204,11 @@ const Profile = () => {
 
             {/* Demographics Section */}
             <div className="space-y-6">
-              <h2 className="text-lg font-bold text-gray-800 dark:text-gray-200 border-b border-gray-100 dark:border-gray-800 pb-2">Demographics</h2>
+              <h2 className="text-lg font-bold text-gray-800 dark:text-gray-200 border-b border-gray-100 dark:border-gray-800 pb-2">{t('profile_demographics')}</h2>
               
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-500 mb-1 flex items-center gap-1"><MapPin size={14}/> City (By Location)</label>
+                  <label className="block text-sm font-semibold text-gray-500 mb-1 flex items-center gap-1"><MapPin size={14}/> {t('profile_city')}</label>
                   {isEditing ? (
                     <input 
                       type="text" 
@@ -214,15 +216,15 @@ const Profile = () => {
                       value={profileData.city} 
                       onChange={handleChange}
                       className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-dark dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
-                      placeholder="e.g. Almaty"
+                      placeholder={t('profile_egAlmaty')}
                     />
                   ) : (
-                    <p className="text-dark dark:text-gray-300 font-medium px-1">{profileData.city || 'Not specified'}</p>
+                    <p className="text-dark dark:text-gray-300 font-medium px-1">{profileData.city || t('profile_notSpecified')}</p>
                   )}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-500 mb-1 flex items-center gap-1"><Calendar size={14}/> Age (Optional)</label>
+                  <label className="block text-sm font-semibold text-gray-500 mb-1 flex items-center gap-1"><Calendar size={14}/> {t('profile_age')}</label>
                   {isEditing ? (
                     <input 
                       type="number" 
@@ -230,12 +232,12 @@ const Profile = () => {
                       value={profileData.age} 
                       onChange={handleChange}
                       className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-dark dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
-                      placeholder="e.g. 25"
+                      placeholder={t('profile_egAge')}
                       min="13"
                       max="120"
                     />
                   ) : (
-                    <p className="text-dark dark:text-gray-300 font-medium px-1">{profileData.age ? `${profileData.age} years old` : 'Not specified'}</p>
+                    <p className="text-dark dark:text-gray-300 font-medium px-1">{profileData.age ? `${profileData.age} ${t('profile_yearsOld')}` : t('profile_notSpecified')}</p>
                   )}
                 </div>
               </div>

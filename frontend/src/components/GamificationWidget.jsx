@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { Trophy, Star, Medal, Zap } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 
 const GamificationWidget = () => {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [points, setPoints] = useState(0);
   const [helpCount, setHelpCount] = useState(0);
 
@@ -33,12 +35,12 @@ const GamificationWidget = () => {
           <Trophy size={32} className="text-white drop-shadow-md" />
         </div>
         
-        <h3 className="text-xl font-bold tracking-tight">Level {level} Volunteer</h3>
+        <h3 className="text-xl font-bold tracking-tight">{t('gamification_levelX').replace('{level}', level)}</h3>
         
         <div className="flex items-center gap-2 mt-4 bg-white/10 px-4 py-2 rounded-full border border-white/5">
           <Zap size={16} className="text-yellow-400" />
           <span className="font-extrabold text-lg">{points.toLocaleString()}</span>
-          <span className="text-xs text-gray-300 uppercase tracking-widest font-semibold ml-1">Pts</span>
+          <span className="text-xs text-gray-300 uppercase tracking-widest font-semibold ml-1">{t('gamification_pts')}</span>
         </div>
       </div>
 
@@ -46,12 +48,12 @@ const GamificationWidget = () => {
         <div className="bg-white/5 rounded-xl p-3 border border-white/5">
           <Star size={20} className="text-secondary mx-auto mb-2" />
           <div className="text-sm font-bold">{helpCount}</div>
-          <div className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Helps</div>
+          <div className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">{t('gamification_helps')}</div>
         </div>
         <div className="bg-white/5 rounded-xl p-3 border border-white/5">
           <Medal size={20} className="text-primary mx-auto mb-2" />
-          <div className="text-sm font-bold">Lv. {level}</div>
-          <div className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Rank</div>
+          <div className="text-sm font-bold">{t('gamification_lv')}{level}</div>
+          <div className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">{t('gamification_rank')}</div>
         </div>
       </div>
     </div>

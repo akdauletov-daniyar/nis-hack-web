@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Plug, Server, Clock, ArrowRight, Code, Loader2, Zap } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
 
 const API_BASE = 'http://localhost:8000';
 
 const IntegrationService = () => {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     DATE_OCC: '2024-01-15', TIME_OCC: '14:30', Lat: '34.0522', Lon: '-118.2437',
     'PT08.S1(CO)': '1200', Temperature_C: '22.5', 'RH_%': '55', Wind_Speed: '3.2',
@@ -40,20 +42,19 @@ const IntegrationService = () => {
         <div className="flex items-center gap-3 mb-3">
           <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 text-cyan-500 flex items-center justify-center"><Plug size={24} /></div>
           <div>
-            <h1 className="text-3xl font-extrabold text-dark tracking-tight">Integration Service</h1>
-            <p className="text-gray-500 dark:text-gray-400 font-medium">Real-Time Air Quality Inference Wrapper</p>
+            <h1 className="text-3xl font-extrabold text-dark tracking-tight">{t('int_title')}</h1>
+            <p className="text-gray-500 dark:text-gray-400 font-medium">{t('int_subtitle')}</p>
           </div>
         </div>
         <p className="text-gray-600 dark:text-gray-400 mt-4 leading-relaxed max-w-3xl">
-          A production-ready service wrapper around the Air Quality Hybrid Model. Maintains a rolling history buffer,
-          auto-pads short sequences for single-event inference, and returns JSON-serializable prediction results.
+          {t('int_desc')}
         </p>
       </div>
 
       {/* Sensor Event Form */}
       <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 mb-8">
         <h2 className="text-lg font-bold text-dark dark:text-white flex items-center gap-2 mb-4">
-          <Zap size={20} className="text-primary" /> Simulate Sensor Event
+          <Zap size={20} className="text-primary" /> {t('int_simulate')}
         </h2>
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mb-4">
@@ -68,7 +69,7 @@ const IntegrationService = () => {
           <button type="submit" disabled={loading}
             className="px-6 py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary-alt transition-colors disabled:opacity-50 flex items-center gap-2">
             {loading ? <Loader2 size={16} className="animate-spin" /> : <Zap size={16} />}
-            {loading ? 'Processing...' : 'Predict'}
+            {loading ? t('aqm_processing') : t('aqm_predict')}
           </button>
         </form>
         {error && <p className="text-red-500 text-sm mt-3 font-medium">❌ {error}</p>}
@@ -77,7 +78,7 @@ const IntegrationService = () => {
       {/* Prediction Result */}
       {result && (
         <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 mb-8">
-          <h2 className="text-lg font-bold text-dark dark:text-white mb-4">Prediction Result</h2>
+          <h2 className="text-lg font-bold text-dark dark:text-white mb-4">{t('int_predResult')}</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <div className="bg-green-50 rounded-xl p-4 border border-green-100 text-center">
               <p className="text-xs text-gray-500">CO</p>
@@ -92,7 +93,7 @@ const IntegrationService = () => {
               <p className="text-lg font-extrabold text-orange-600">{result.predicted_aqi}</p>
             </div>
             <div className="bg-purple-50 rounded-xl p-4 border border-purple-100 text-center">
-              <p className="text-xs text-gray-500">Category</p>
+              <p className="text-xs text-gray-500">{t('aqm_category')}</p>
               <p className="text-lg font-extrabold text-purple-600">{result.predicted_aqi_category}</p>
             </div>
           </div>
@@ -102,10 +103,10 @@ const IntegrationService = () => {
       {/* Request Flow */}
       <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 mb-8">
         <h2 className="text-lg font-bold text-dark dark:text-white flex items-center gap-2 mb-4">
-          <Server size={20} className="text-primary" /> Request Flow
+          <Server size={20} className="text-primary" /> {t('int_reqFlow')}
         </h2>
         <div className="flex flex-col sm:flex-row items-center gap-3 justify-center">
-          {['Sensor Event', 'History Buffer', 'Sequence Padding', 'Model Inference', 'JSON Response'].map((step, idx) => (
+          {[t('int_step1'), t('int_step2'), t('int_step3'), t('int_step4'), t('int_step5')].map((step, idx) => (
             <React.Fragment key={step}>
               <div className="bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl px-4 py-3 text-center min-w-[130px]">
                 <p className="text-sm font-bold text-dark dark:text-white">{step}</p>
@@ -119,16 +120,16 @@ const IntegrationService = () => {
       {/* Buffer Info */}
       <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 mb-8">
         <h2 className="text-lg font-bold text-dark dark:text-white flex items-center gap-2 mb-4">
-          <Clock size={20} className="text-secondary" /> Rolling History Buffer
+          <Clock size={20} className="text-secondary" /> {t('int_rollingBuffer')}
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 border border-gray-100 dark:border-gray-700">
-            <h3 className="font-bold text-dark dark:text-white text-sm mb-1">Buffer Strategy</h3>
-            <p className="text-xs text-gray-500">Fixed-size deque (window_size + horizon). New events append, oldest evicted when full.</p>
+            <h3 className="font-bold text-dark dark:text-white text-sm mb-1">{t('int_bufferStrat')}</h3>
+            <p className="text-xs text-gray-500">{t('int_bufferStratDesc')}</p>
           </div>
           <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 border border-gray-100 dark:border-gray-700">
-            <h3 className="font-bold text-dark dark:text-white text-sm mb-1">Auto-Padding</h3>
-            <p className="text-xs text-gray-500">Short buffers pad by duplicating the earliest row to reach minimum sequence length.</p>
+            <h3 className="font-bold text-dark dark:text-white text-sm mb-1">{t('int_autoPad')}</h3>
+            <p className="text-xs text-gray-500">{t('int_autoPadDesc')}</p>
           </div>
         </div>
       </div>
@@ -136,22 +137,22 @@ const IntegrationService = () => {
       {/* Response Schema */}
       <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6">
         <h2 className="text-lg font-bold text-dark dark:text-white flex items-center gap-2 mb-4">
-          <Code size={20} className="text-green-500" /> Response Schema
+          <Code size={20} className="text-green-500" /> {t('int_resSchema')}
         </h2>
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-gray-100 dark:border-gray-800">
-              <th className="text-left py-2 text-gray-500 font-semibold text-xs">Field</th>
-              <th className="text-left py-2 text-gray-500 font-semibold text-xs">Type</th>
-              <th className="text-left py-2 text-gray-500 font-semibold text-xs">Description</th>
+              <th className="text-left py-2 text-gray-500 font-semibold text-xs">{t('int_field')}</th>
+              <th className="text-left py-2 text-gray-500 font-semibold text-xs">{t('int_type')}</th>
+              <th className="text-left py-2 text-gray-500 font-semibold text-xs">{t('int_descTable')}</th>
             </tr>
           </thead>
           <tbody>
             {[
-              { field: 'predicted_co_concentration', type: 'float', desc: 'CO level' },
-              { field: 'predicted_c6h6_concentration', type: 'float', desc: 'C6H6 level' },
-              { field: 'predicted_aqi', type: 'int', desc: 'Air Quality Index' },
-              { field: 'predicted_aqi_category', type: 'string', desc: 'AQI category' },
+              { field: 'predicted_co_concentration', type: 'float', desc: t('int_descCO') },
+              { field: 'predicted_c6h6_concentration', type: 'float', desc: t('int_descC6H6') },
+              { field: 'predicted_aqi', type: 'int', desc: t('int_descAQI') },
+              { field: 'predicted_aqi_category', type: 'string', desc: t('int_descCat') },
             ].map((f) => (
               <tr key={f.field} className="border-b border-gray-50 dark:border-gray-800">
                 <td className="py-2 font-mono text-xs font-bold text-primary">{f.field}</td>

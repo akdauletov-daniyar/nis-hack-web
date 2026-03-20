@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Crosshair, MapPin, Navigation, X } from 'lucide-react';
 import { getPublicEnv } from '../lib/env';
+import { useLanguage } from '../context/LanguageContext';
 
 const LandingPage = () => {
   const [mapLocation, setMapLocation] = useState('Almaty City, Kazakhstan');
@@ -10,6 +11,7 @@ const LandingPage = () => {
   const [isRouting, setIsRouting] = useState(false);
   const [isPanelExpanded, setIsPanelExpanded] = useState(false);
   const googleMapsApiKey = getPublicEnv('VITE_GOOGLE_CLOUD_API');
+  const { t } = useLanguage();
 
   const handleLocate = () => {
     if ("geolocation" in navigator) {
@@ -52,14 +54,14 @@ const LandingPage = () => {
         <div className="text-center mb-16 max-w-3xl mx-auto flex flex-col items-center justify-center relative mt-10">
 
           <h1 className="text-5xl md:text-7xl font-extrabold text-dark tracking-tighter mb-6 leading-tight">
-            Level-up your city’s <span className="text-primary">accessibility.</span>
+            {t('landing_hero1')} <span className="text-primary">{t('landing_hero2')}</span>
           </h1>
           <p className="text-lg md:text-xl text-gray-700 mb-10 max-w-2xl font-medium">
-            The ultimate navigation tool. Map your accessible journey and connect instantly with nearby volunteers when you need a little extra support.
+            {t('landing_desc')}
           </p>
           <div className="flex gap-4">
             <Link to="/login" className="px-8 py-3.5 bg-primary text-white font-bold rounded-xl hover:bg-primary-alt transition-colors duration-300">
-              Get Started
+              {t('landing_getStarted')}
             </Link>
           </div>
         </div>
@@ -73,7 +75,7 @@ const LandingPage = () => {
               <div className="bg-white/95 backdrop-blur-sm p-4 rounded-xl shadow-lg border border-gray-100 w-[90vw] sm:w-80 animate-in fade-in slide-in-from-top-2">
                 <div className="flex justify-between items-center border-b border-gray-100 pb-2 mb-4">
                   <h3 className="font-bold text-dark flex items-center gap-2 text-sm">
-                    <Navigation size={16} className="text-primary"/> Plan Your Route
+                    <Navigation size={16} className="text-primary"/> {t('landing_planRouteText')}
                   </h3>
                   <button onClick={() => setIsPanelExpanded(false)} className="text-gray-400 hover:text-[var(--app-text)] transition-colors">
                     <X size={18} />
@@ -88,13 +90,13 @@ const LandingPage = () => {
                       type="text" 
                       value={origin} 
                       onChange={(e) => { setOrigin(e.target.value); setIsRouting(false); }} 
-                      placeholder="Starting point" 
+                      placeholder={t('landing_startPoint')} 
                       className="bg-white border border-gray-200 text-dark text-sm rounded-lg focus:ring-primary focus:border-primary block w-full pl-9 pr-10 p-2.5 outline-none shadow-sm transition-shadow" 
                     />
                     <button 
                       onClick={handleLocate} 
                       className="absolute inset-y-0 right-0 pr-3 flex items-center text-primary hover:text-primary-alt transition-colors" 
-                      title="Use my current location"
+                      title={t('landing_useCurrentLoc')}
                     >
                       <MapPin size={16} />
                     </button>
@@ -108,7 +110,7 @@ const LandingPage = () => {
                       type="text" 
                       value={destination} 
                       onChange={(e) => { setDestination(e.target.value); setIsRouting(false); }} 
-                      placeholder="Where to?" 
+                      placeholder={t('landing_whereTo')} 
                       className="bg-white border border-gray-200 text-dark text-sm rounded-lg focus:ring-primary focus:border-primary block w-full pl-9 p-2.5 outline-none shadow-sm transition-shadow" 
                     />
                   </div>
@@ -117,7 +119,7 @@ const LandingPage = () => {
                     onClick={handleRoute} 
                     className="w-full bg-dark hover:bg-gray-800 text-white font-bold rounded-lg py-2.5 text-sm transition-colors flex items-center justify-center gap-2 mt-2 shadow-md hover:shadow-lg"
                   >
-                    Route
+                    {t('landing_routeBtn')}
                   </button>
                 </div>
               </div>
@@ -129,7 +131,7 @@ const LandingPage = () => {
                 <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
                   <Navigation size={16} className="text-primary" />
                 </div>
-                Plan Route
+                {t('landing_planRouteBtn')}
               </button>
             )}
           </div>
@@ -139,7 +141,7 @@ const LandingPage = () => {
             <button
                onClick={handleLocate}
                className="absolute z-10 bottom-6 right-6 bg-white dark:bg-gray-800 p-3 rounded-full shadow-lg text-dark dark:text-white border border-gray-100 dark:border-gray-700 hover:text-primary dark:hover:text-primary transition-all focus:outline-none hover:scale-110 flex items-center justify-center group"
-               title="Move to current location"
+               title={t('landing_moveCurrentLoc')}
             >
                <MapPin size={22} className="group-hover:animate-bounce" />
             </button>

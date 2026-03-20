@@ -1,23 +1,29 @@
 import React from 'react';
 import { X, ThumbsUp, ThumbsDown, Clock, MapPin, Shield, Radio } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
-const LIFECYCLE_BADGES = {
-  planned:   { label: 'Planned',   color: '#3b82f6', bg: '#eff6ff' },
-  active:    { label: 'Active',    color: '#ef4444', bg: '#fef2f2' },
-  resolving: { label: 'Resolving', color: '#22c55e', bg: '#f0fdf4' },
+// Note: We need t() for badges and relative time
+const LIFECYCLE_BADGES_BASE = {
+  planned:   { labelKey: 'status_planned', color: '#3b82f6', bg: '#eff6ff' },
+  active:    { labelKey: 'status_active', color: '#ef4444', bg: '#fef2f2' },
+  resolving: { labelKey: 'status_resolving', color: '#22c55e', bg: '#f0fdf4' },
 };
 
-const IMPACT_BADGES = [
-  { label: 'Low Impact',    color: '#22c55e', bg: '#f0fdf4' },
-  { label: 'Medium Impact', color: '#f59e0b', bg: '#fffbeb' },
-  { label: 'High Impact',   color: '#ef4444', bg: '#fef2f2' },
+const IMPACT_BADGES_BASE = [
+  { labelKey: 'impactBadge_low', color: '#22c55e', bg: '#f0fdf4' },
+  { labelKey: 'impactBadge_medium', color: '#f59e0b', bg: '#fffbeb' },
+  { labelKey: 'impactBadge_high', color: '#ef4444', bg: '#fef2f2' },
 ];
 
 const EventDetailPanel = ({ event, onClose, onVote, categoryConfig }) => {
+  const { t } = useLanguage();
   const cfg = categoryConfig[event.category] || categoryConfig.urban;
-  const lifecycleBadge = LIFECYCLE_BADGES[event.lifecycle] || LIFECYCLE_BADGES.active;
-  const impactBadge = IMPACT_BADGES[(event.impact_level || 1) - 1];
-  const timeAgo = getRelativeTime(event.created_at);
+  const lifecycleBadgeBase = LIFECYCLE_BADGES_BASE[event.lifecycle] || LIFECYCLE_BADGES_BASE.active;
+  const impactBadgeBase = IMPACT_BADGES_BASE[(event.impact_level || 1) - 1];
+  const timeAgo = getRelativeTime(event.created_at, t);
+
+  const lifecycleBadge = { ...lifecycleBadgeBase, label: t(lifecycleBadgeBase.labelKey) };
+  const impactBadge = { ...impactBadgeBase, label: t(impactBadgeBase.labelKey) };
 
   return (
     <div className="absolute top-0 right-0 bottom-0 z-[1000] w-full sm:w-[400px] pointer-events-auto">
@@ -67,7 +73,7 @@ const EventDetailPanel = ({ event, onClose, onVote, categoryConfig }) => {
               {impactBadge.label}
             </span>
             <span className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 flex items-center gap-1">
-              <Radio size={10} /> {event.effect_radius || 100}m radius
+              <Radio size={10} /> {event.effect_radius || 100}m{t('panel_radius')}
             </span>
           </div>
         </div>
@@ -95,7 +101,7 @@ const EventDetailPanel = ({ event, onClose, onVote, categoryConfig }) => {
           {/* Smart Tags */}
           {event.smart_tags && event.smart_tags.length > 0 && (
             <div>
-              <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 block">Tags</label>
+              <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 block">{t('panel_tags')}</label>
               <div className="flex flex-wrap gap-1.5">
                 {event.smart_tags.map((tag, i) => (
                   <span
@@ -112,7 +118,7 @@ const EventDetailPanel = ({ event, onClose, onVote, categoryConfig }) => {
           {/* Description */}
           {event.description && (
             <div>
-              <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 block">Description</label>
+              <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 block">{t('panel_desc')}</label>
               <p className="text-sm text-dark leading-relaxed bg-gray-50 dark:bg-gray-800 p-3 rounded-xl">
                 {event.description}
               </p>
@@ -123,7 +129,7 @@ const EventDetailPanel = ({ event, onClose, onVote, categoryConfig }) => {
           <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl p-4 text-center space-y-3">
             <div className="flex items-center justify-center gap-2">
               <Shield size={16} className="text-primary" />
-              <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Trust Score</span>
+              <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">{t('panel_trustScore')}</span>
             </div>
 
             <div className={`text-4xl font-extrabold ${
@@ -138,14 +144,14 @@ const EventDetailPanel = ({ event, onClose, onVote, categoryConfig }) => {
                 className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-green-50 hover:bg-green-100 dark:bg-green-900/20 dark:hover:bg-green-900/30 text-green-700 dark:text-green-400 font-bold text-sm transition-all hover:shadow-md"
               >
                 <ThumbsUp size={16} />
-                Confirm
+                {t('panel_confirm')}
               </button>
               <button
                 onClick={() => onVote(event.id, -1)}
                 className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 font-bold text-sm transition-all hover:shadow-md"
               >
                 <ThumbsDown size={16} />
-                Not here
+                {t('panel_notHere')}
               </button>
             </div>
           </div>
@@ -154,7 +160,7 @@ const EventDetailPanel = ({ event, onClose, onVote, categoryConfig }) => {
         {/* Footer timestamp */}
         <div className="px-6 py-3 border-t border-gray-100 dark:border-gray-800 text-center">
           <span className="text-[10px] text-gray-400 font-mono">
-            Reported {new Date(event.created_at).toLocaleString()}
+            {t('panel_reported')}{new Date(event.created_at).toLocaleString()}
           </span>
         </div>
       </div>
@@ -162,18 +168,18 @@ const EventDetailPanel = ({ event, onClose, onVote, categoryConfig }) => {
   );
 };
 
-function getRelativeTime(dateStr) {
-  if (!dateStr) return 'Unknown';
+function getRelativeTime(dateStr, t) {
+  if (!dateStr) return t('panel_timeUnknown');
   const now = new Date();
   const then = new Date(dateStr);
   const diffMs = now - then;
   const diffMin = Math.floor(diffMs / 60000);
-  if (diffMin < 1) return 'Just now';
-  if (diffMin < 60) return `${diffMin}m ago`;
+  if (diffMin < 1) return t('panel_timeJustNow');
+  if (diffMin < 60) return `${diffMin}${t('panel_timeMinsAgo')}`;
   const diffHr = Math.floor(diffMin / 60);
-  if (diffHr < 24) return `${diffHr}h ago`;
+  if (diffHr < 24) return `${diffHr}${t('panel_timeHrsAgo')}`;
   const diffDay = Math.floor(diffHr / 24);
-  return `${diffDay}d ago`;
+  return `${diffDay}${t('panel_timeDaysAgo')}`;
 }
 
 export default EventDetailPanel;

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, Camera, MapPin, Clock, ChevronDown, ChevronUp, Send, Loader2, Sparkles } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
+import { useLanguage } from '../context/LanguageContext';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
 const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
@@ -40,6 +41,7 @@ const CreateEventModal = ({ location, onClose, onCreated, categoryConfig }) => {
   const [mediaPreview, setMediaPreview] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const { t } = useLanguage();
 
   // AI Refinement state
   const [aiMode, setAiMode] = useState(false);
@@ -219,7 +221,7 @@ Respond ONLY with a valid JSON object (no markdown, no explanation) with these e
         {/* Header */}
         <div className="sticky top-0 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm px-6 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between z-10 rounded-t-3xl">
           <div>
-            <h2 className="text-lg font-extrabold text-dark">Report Event</h2>
+            <h2 className="text-lg font-extrabold text-dark">{t('modal_reportEvent')}</h2>
             <p className="text-xs text-gray-500 mt-0.5 flex items-center gap-1">
               <MapPin size={12} /> {location.lat.toFixed(5)}, {location.lng.toFixed(5)}
             </p>
@@ -235,7 +237,7 @@ Respond ONLY with a valid JSON object (no markdown, no explanation) with these e
               }`}
             >
               <Sparkles size={14} className={aiMode ? 'text-violet-500' : ''} />
-              AI Refinement
+              {t('modal_aiRefine')}
             </button>
             <button onClick={onClose} className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
               <X size={20} className="text-gray-400" />
@@ -247,23 +249,23 @@ Respond ONLY with a valid JSON object (no markdown, no explanation) with these e
 
           {/* ── Event Name (always visible) ── */}
           <div>
-            <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">Event Name *</label>
+            <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">{t('modal_eventName')}</label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. Road construction on Abay St."
+              placeholder={t('modal_egRoad')}
               className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm text-dark outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
             />
           </div>
 
           {/* ── Description (always visible) ── */}
           <div>
-            <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">Description</label>
+            <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 block">{t('modal_desc')}</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Briefly describe what's happening..."
+              placeholder={t('modal_briefDesc')}
               rows={3}
               className="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm text-dark outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary resize-none transition-all"
             />
@@ -279,17 +281,17 @@ Respond ONLY with a valid JSON object (no markdown, no explanation) with these e
               {aiRefining ? (
                 <>
                   <Loader2 size={16} className="animate-spin" />
-                  Refining with AI...
+                  {t('modal_refiningAI')}
                 </>
               ) : aiApplied ? (
                 <>
                   <Sparkles size={16} />
-                  ✓ Refined — Re-run AI
+                  {t('modal_refinedAI')}
                 </>
               ) : (
                 <>
                   <Sparkles size={16} />
-                  Auto-fill with AI
+                  {t('modal_autoFillAI')}
                 </>
               )}
             </button>
@@ -299,21 +301,21 @@ Respond ONLY with a valid JSON object (no markdown, no explanation) with these e
           {aiApplied && (
             <div className="flex items-center gap-2 text-xs text-violet-700 dark:text-violet-300 bg-violet-50 dark:bg-violet-900/20 px-4 py-2.5 rounded-xl border border-violet-200 dark:border-violet-800">
               <Sparkles size={14} />
-              AI has auto-filled the fields below. Review and adjust as needed.
+              {t('modal_aiAppliedMsg')}
             </div>
           )}
 
           {/* ── LAYER 1: Base (Required) ── */}
           {/* Category Selection */}
           <div>
-            <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 block">Category *</label>
+            <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 block">{t('modal_category')}</label>
             <div className="grid grid-cols-2 gap-3">
-              {CATEGORIES.map(cat => (
+              {Object.entries(categoryConfig).map(([key, cat]) => (
                 <button
-                  key={cat.key}
-                  onClick={() => { setCategory(cat.key); if (!aiApplied) setSmartTags([]); }}
+                  key={key}
+                  onClick={() => { setCategory(key); if (!aiApplied) setSmartTags([]); }}
                   className={`flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all duration-200 ${
-                    category === cat.key
+                    category === key
                       ? 'border-primary bg-primary/5 shadow-md shadow-primary/10 scale-[1.02]'
                       : 'border-gray-100 dark:border-gray-700 hover:border-gray-200 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800'
                   }`}
@@ -328,7 +330,7 @@ Respond ONLY with a valid JSON object (no markdown, no explanation) with these e
 
           {/* Media Upload */}
           <div>
-            <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 block">Photo / Video</label>
+            <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 block">{t('modal_photoVideo')}</label>
             {mediaPreview ? (
               <div className="relative rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-700">
                 <img src={mediaPreview} alt="Preview" className="w-full h-48 object-cover" />
@@ -342,8 +344,8 @@ Respond ONLY with a valid JSON object (no markdown, no explanation) with these e
             ) : (
               <label className="flex flex-col items-center justify-center gap-2 p-8 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-2xl cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all group">
                 <Camera size={28} className="text-gray-300 group-hover:text-primary transition-colors" />
-                <span className="text-sm font-semibold text-gray-400 group-hover:text-primary transition-colors">Tap to add photo</span>
-                <span className="text-[10px] text-gray-300">A photo adds more credibility to your report</span>
+                <span className="text-sm font-semibold text-gray-400 group-hover:text-primary transition-colors">{t('modal_tapAddPhoto')}</span>
+                <span className="text-[10px] text-gray-300">{t('modal_photoCredibility')}</span>
                 <input type="file" accept="image/*,video/*" onChange={handleMediaChange} className="hidden" />
               </label>
             )}
@@ -352,7 +354,7 @@ Respond ONLY with a valid JSON object (no markdown, no explanation) with these e
           {/* Timestamp (auto) */}
           <div className="flex items-center gap-2 text-xs text-gray-400 bg-gray-50 dark:bg-gray-800 px-4 py-2.5 rounded-xl">
             <Clock size={14} />
-            <span>Timestamp: <strong className="text-dark">{new Date().toLocaleString()}</strong></span>
+            <span>{t('modal_timestamp')}<strong className="text-dark">{new Date().toLocaleString()}</strong></span>
           </div>
 
           {/* ── LAYER 2: Details (Optional) ── */}
@@ -360,7 +362,7 @@ Respond ONLY with a valid JSON object (no markdown, no explanation) with these e
             onClick={() => setShowDetails(!showDetails)}
             className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-xl text-sm font-semibold text-dark hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
           >
-            <span>🎯 Add more details (optional)</span>
+            <span>{t('modal_addDetails')}</span>
             {showDetails ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
           </button>
 
@@ -368,7 +370,7 @@ Respond ONLY with a valid JSON object (no markdown, no explanation) with these e
             <div className="space-y-5 animate-in fade-in slide-in-from-top-2">
               {/* Impact Level */}
               <div>
-                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 block">Impact Level</label>
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 block">{t('modal_impactLevel')}</label>
                 <div className="flex gap-2">
                   {[1, 2, 3].map(level => (
                     <button
@@ -382,7 +384,7 @@ Respond ONLY with a valid JSON object (no markdown, no explanation) with these e
                           : 'border-gray-100 dark:border-gray-700 text-gray-500 hover:border-gray-200'
                       }`}
                     >
-                      {category ? IMPACT_LABELS[category]?.[level - 1] : ['Low', 'Medium', 'High'][level - 1]}
+                      {level === 1 ? t('impact_low') : level === 2 ? t('impact_medium') : t('impact_high')}
                     </button>
                   ))}
                 </div>
@@ -390,12 +392,12 @@ Respond ONLY with a valid JSON object (no markdown, no explanation) with these e
 
               {/* Lifecycle */}
               <div>
-                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 block">Status</label>
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 block">{t('modal_status')}</label>
                 <div className="flex gap-2">
                   {[
-                    { value: 'planned', label: '📅 Planned', color: 'blue' },
-                    { value: 'active', label: '🔴 Active', color: 'red' },
-                    { value: 'resolving', label: '🔧 Resolving', color: 'green' },
+                    { value: 'planned', label: `📅 ${t('status_planned')}`, color: 'blue' },
+                    { value: 'active', label: `🔴 ${t('status_active')}`, color: 'red' },
+                    { value: 'resolving', label: `🔧 ${t('status_resolving')}`, color: 'green' },
                   ].map(opt => (
                     <button
                       key={opt.value}
@@ -420,7 +422,7 @@ Respond ONLY with a valid JSON object (no markdown, no explanation) with these e
               {/* Smart Tags */}
               {category && (
                 <div>
-                  <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 block">Quick Tags</label>
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 block">{t('modal_quickTags')}</label>
                   <div className="flex flex-wrap gap-2">
                     {(SMART_TAGS_MAP[category] || []).map(tag => (
                       <button
@@ -459,12 +461,12 @@ Respond ONLY with a valid JSON object (no markdown, no explanation) with these e
             {submitting ? (
               <>
                 <Loader2 size={18} className="animate-spin" />
-                Submitting...
+                {t('modal_submitting')}
               </>
             ) : (
               <>
                 <Send size={18} />
-                Submit Report
+                {t('modal_submitReport')}
               </>
             )}
           </button>

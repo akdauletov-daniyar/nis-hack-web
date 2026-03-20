@@ -3,22 +3,25 @@ import { MapContainer, TileLayer, CircleMarker, Circle, Popup, useMapEvents, use
 import { Plus, Filter, X, Loader2, LocateFixed } from 'lucide-react';
 import CreateEventModal from '../components/CreateEventModal';
 import EventDetailPanel from '../components/EventDetailPanel';
+import { useLanguage } from '../context/LanguageContext';
 import 'leaflet/dist/leaflet.css';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
 
-const CATEGORY_CONFIG = {
-  infrastructure: { color: '#f97316', emoji: '🚧', label: 'Infrastructure' },
-  emergency:      { color: '#ef4444', emoji: '⚠️', label: 'Emergency' },
-  urban:          { color: '#3b82f6', emoji: '🏙️', label: 'Urban' },
-  events:         { color: '#22c55e', emoji: '🎉', label: 'Events' },
+// Note: CATEGORY_CONFIG and LIFECYCLE_OPTIONS text will be translated dynamically inside component using t()
+
+const CATEGORY_CONFIG_BASE = {
+  infrastructure: { color: '#f97316', emoji: '🚧', labelKey: 'cat_infrastructure' },
+  emergency:      { color: '#ef4444', emoji: '⚠️', labelKey: 'cat_emergency' },
+  urban:          { color: '#3b82f6', emoji: '🏙️', labelKey: 'cat_urban' },
+  events:         { color: '#22c55e', emoji: '🎉', labelKey: 'cat_events' },
 };
 
-const LIFECYCLE_OPTIONS = [
-  { value: '', label: 'All Statuses' },
-  { value: 'planned', label: '📅 Planned' },
-  { value: 'active', label: '🔴 Active' },
-  { value: 'resolving', label: '🔧 Resolving' },
+const LIFECYCLE_OPTIONS_BASE = [
+  { value: '', labelKey: 'status_all' },
+  { value: 'planned', labelKey: 'status_planned', emoji: '📅 ' },
+  { value: 'active', labelKey: 'status_active', emoji: '🔴 ' },
+  { value: 'resolving', labelKey: 'status_resolving', emoji: '🔧 ' },
 ];
 
 // Component to recenter the map when user location changes
@@ -53,6 +56,19 @@ const EventsMap = () => {
   const [placingPin, setPlacingPin] = useState(false);
   const [locating, setLocating] = useState(false);
   const mapRef = useRef(null);
+  const { t } = useLanguage();
+
+  // Dynamic config based on language
+  const CATEGORY_CONFIG = Object.fromEntries(
+    Object.entries(CATEGORY_CONFIG_BASE).map(([key, val]) => [
+      key, 
+      { ...val, label: t(val.labelKey), desc: t(`catDesc_${key}`) }
+    ])
+  );
+  const LIFECYCLE_OPTIONS = LIFECYCLE_OPTIONS_BASE.map(opt => ({
+    ...opt,
+    label: (opt.emoji || '') + t(opt.labelKey)
+  }));
 
   // Fetch events from API
   const fetchEvents = async () => {
@@ -151,7 +167,7 @@ const EventsMap = () => {
             className="flex items-center gap-2 px-4 py-2.5 bg-white/95 backdrop-blur-md rounded-xl shadow-lg border border-gray-100 text-sm font-semibold text-dark hover:bg-gray-50 transition-all"
           >
             <Filter size={16} />
-            Filters
+            {t('map_filters')}
             {(filterCategory || filterLifecycle) && (
               <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
             )}
@@ -166,7 +182,7 @@ const EventsMap = () => {
                   !filterCategory ? 'bg-primary text-white border-primary' : 'bg-white/95 backdrop-blur-md text-dark border-gray-100 hover:border-primary/30'
                 }`}
               >
-                All
+                {t('map_all')}
               </button>
               {Object.entries(CATEGORY_CONFIG).map(([key, cfg]) => (
                 <button
@@ -209,7 +225,7 @@ const EventsMap = () => {
         {/* Event Count Badge */}
         <div className="pointer-events-auto ml-auto">
           <div className="px-3 py-2 bg-white/95 backdrop-blur-md rounded-xl shadow-lg border border-gray-100 text-xs font-bold text-dark">
-            {loading ? <Loader2 size={14} className="animate-spin" /> : `${events.length} events`}
+            {loading ? <Loader2 size={14} className="animate-spin" /> : `${events.length} ${t('map_eventsCount')}`}
           </div>
         </div>
       </div>
@@ -217,7 +233,7 @@ const EventsMap = () => {
       {/* Placing Pin Banner */}
       {placingPin && (
         <div className="absolute top-20 left-1/2 -translate-x-1/2 z-[1000] px-6 py-3 bg-primary text-white rounded-2xl shadow-2xl font-bold text-sm flex items-center gap-3 animate-bounce">
-          📍 Tap the map to place your event pin
+          {t('map_tapPin')}
           <button onClick={() => setPlacingPin(false)} className="p-1 rounded-full hover:bg-white/20 transition-colors">
             <X size={16} />
           </button>
@@ -302,7 +318,7 @@ const EventsMap = () => {
           onClick={handleLocateMe}
           disabled={locating}
           className="flex items-center justify-center w-12 h-12 bg-white/95 backdrop-blur-md hover:bg-white text-dark rounded-2xl shadow-lg border border-gray-100 transition-all hover:shadow-xl hover:scale-105 disabled:opacity-50"
-          title="Go to my location"
+          title={t('map_goToLocation')}
         >
           <LocateFixed size={20} className={locating ? 'animate-pulse text-primary' : 'text-gray-600 hover:text-primary transition-colors'} />
         </button>
@@ -313,7 +329,7 @@ const EventsMap = () => {
           className="flex items-center gap-2 px-6 py-4 bg-primary hover:bg-primary-alt text-white font-bold rounded-2xl shadow-[0_8px_30px_rgba(245,96,41,0.4)] hover:shadow-[0_12px_40px_rgba(245,96,41,0.5)] hover:-translate-y-1 transition-all duration-300"
         >
           <Plus size={20} strokeWidth={3} />
-          Report Event
+          {t('map_reportEvent')}
         </button>
       </div>
 

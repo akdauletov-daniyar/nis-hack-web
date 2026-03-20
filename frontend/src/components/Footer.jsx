@@ -1,7 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useLanguage } from '../context/LanguageContext';
 
 const Footer = () => {
+  const { t } = useLanguage();
   return (
     <footer className="bg-dark text-gray-300 py-12 border-t border-gray-800 mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -9,21 +11,21 @@ const Footer = () => {
           <div className="col-span-1 md:col-span-2">
             <h2 className="text-2xl font-extrabold text-white mb-4">sonar</h2>
             <p className="text-gray-400 text-sm max-w-sm mb-6">
-              Level-up your city's accessibility. Map your accessible journey and connect instantly with nearby volunteers.
+              {t('footer_desc')}
             </p>
           </div>
           <div>
-            <h3 className="text-white font-bold mb-4">Platform</h3>
+            <h3 className="text-white font-bold mb-4">{t('footer_platform')}</h3>
             <ul className="space-y-2 text-sm">
-              <li><Link to="/login" className="hover:text-primary transition-colors">Sign In / Register</Link></li>
-              <li><Link to="/" className="hover:text-primary transition-colors">Interactive Map</Link></li>
+              <li><Link to="/login" className="hover:text-primary transition-colors">{t('footer_signInReg')}</Link></li>
+              <li><Link to="/" className="hover:text-primary transition-colors">{t('footer_interactiveMap')}</Link></li>
             </ul>
           </div>
           <div>
-            <h3 className="text-white font-bold mb-4">Legal</h3>
+            <h3 className="text-white font-bold mb-4">{t('footer_legal')}</h3>
             <ul className="space-y-2 text-sm">
-              <li><a href="#" className="hover:text-primary transition-colors">Privacy Policy</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Terms of Service</a></li>
+              <li><a href="#" className="hover:text-primary transition-colors">{t('footer_privacyPolicy')}</a></li>
+              <li><a href="#" className="hover:text-primary transition-colors">{t('footer_termsService')}</a></li>
             </ul>
           </div>
         </div>

@@ -1,12 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { Map, ListChecks, BellRing, BarChart3, Users, ShieldAlert, Award, FileText, Settings, LogOut, Info, Sun, Moon, User, Brain, Wind, FilterX, Accessibility, Plug, Car } from 'lucide-react';
 
 const Navbar = () => {
   const { user, role, signOut } = useAuth();
   const { effectiveTheme, toggleTheme } = useTheme();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [showDropdown, setShowDropdown] = useState(false);
   const [showModelsDropdown, setShowModelsDropdown] = useState(false);
@@ -41,25 +43,25 @@ const Navbar = () => {
   };
 
   const modelLinks = [
-    { to: '/models/air-quality', label: 'Air Quality Model', icon: Wind },
-    { to: '/models/data-preprocessing', label: 'Data Preprocessing', icon: FilterX },
-    { to: '/models/geoai-accessibility', label: 'GeoAI Accessibility', icon: Accessibility },
-    { to: '/models/integration-service', label: 'Integration Service', icon: Plug },
-    { to: '/models/traffic-model', label: 'Traffic Model', icon: Car },
+    { to: '/models/air-quality', label: t('nav_airQuality'), icon: Wind },
+    { to: '/models/data-preprocessing', label: t('nav_dataPrep'), icon: FilterX },
+    { to: '/models/geoai-accessibility', label: t('nav_geoAI'), icon: Accessibility },
+    { to: '/models/integration-service', label: t('nav_integration'), icon: Plug },
+    { to: '/models/traffic-model', label: t('nav_traffic'), icon: Car },
   ];
 
   const commonLinks = [
-    { to: '/dashboard', label: 'My Hub', icon: Map, roles: ['volunteer', 'emergency', 'government', 'admin'] }
+    { to: '/dashboard', label: t('nav_myHub'), icon: Map, roles: ['volunteer', 'emergency', 'government', 'admin'] }
   ];
   const citizenLinks = [
-    { to: '/citizen', label: 'Routing & Map', icon: Map, roles: ['citizen', 'volunteer', 'emergency', 'government', 'admin'] },
-    { to: '/events-map', label: 'Events Map', icon: Map, roles: ['citizen', 'volunteer', 'emergency', 'government', 'admin'] }
+    { to: '/citizen', label: t('nav_routingMap'), icon: Map, roles: ['citizen', 'volunteer', 'emergency', 'government', 'admin'] },
+    { to: '/events-map', label: t('nav_eventsMap'), icon: Map, roles: ['citizen', 'volunteer', 'emergency', 'government', 'admin'] }
   ];
   const volunteerLinks = [
-    { to: '/volunteer', label: 'Volunteer Board', icon: Award, roles: ['volunteer'] }
+    { to: '/volunteer', label: t('nav_volunteerBoard'), icon: Award, roles: ['volunteer'] }
   ];
   const emergencyLinks = [
-    { to: '/emergency', label: 'Emergencies', icon: ShieldAlert, roles: ['emergency', 'admin'] }
+    { to: '/emergency', label: t('nav_emergencies'), icon: ShieldAlert, roles: ['emergency', 'admin'] }
   ];
   const governmentLinks = [
     // { to: '/government', label: 'City Analytics', icon: BarChart3, roles: ['government', 'admin'] }
@@ -123,7 +125,7 @@ const Navbar = () => {
               onMouseLeave={handleModelsLeave}
             >
               <button className="text-sm font-bold text-dark hover:text-primary transition-colors flex items-center gap-1.5 hidden sm:flex">
-                <Brain size={16} /> AI Models
+                <Brain size={16} /> {t('nav_aiModels')}
               </button>
               {showModelsDropdown && (
                 <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-gray-900 rounded-xl shadow-[0_4px_20px_rgb(0,0,0,0.1)] border border-gray-100 dark:border-gray-800 py-2 z-50 animate-in fade-in slide-in-from-top-2">
@@ -146,12 +148,12 @@ const Navbar = () => {
             </div>
 
             <NavLink to="/events-map" className={({ isActive }) => `text-sm font-bold transition-colors hidden sm:flex items-center gap-1.5 ${isActive ? 'text-primary' : 'text-dark hover:text-primary'}`}>
-              <Map size={16} /> Events Map
+              <Map size={16} /> {t('nav_eventsMap')}
             </NavLink>
 
             {user ? (
               <>
-                <Link to="/about" className="text-sm font-bold text-dark hover:text-primary transition-colors hidden sm:block">About</Link>
+                <Link to="/about" className="text-sm font-bold text-dark hover:text-primary transition-colors hidden sm:block">{t('nav_about')}</Link>
 
                 <div className="relative" ref={dropdownRef}>
                   <button
@@ -165,32 +167,32 @@ const Navbar = () => {
                   {showDropdown && (
                     <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-900 rounded-xl shadow-[0_4px_20px_rgb(0,0,0,0.1)] border border-gray-100 dark:border-gray-800 py-2 z-50 animate-in fade-in slide-in-from-top-2">
                       <div className="px-4 py-2 border-b border-gray-100 dark:border-gray-800 mb-2">
-                        <p className="text-sm font-bold text-dark dark:text-white capitalize">{role || 'Pending Role'}</p>
+                        <p className="text-sm font-bold text-dark dark:text-white capitalize">{role ? t(role) : t('nav_pendingRole')}</p>
                       </div>
 
                       <Link to="/profile" onClick={() => setShowDropdown(false)} className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary flex items-center gap-2">
-                        <User size={16} /> Profile
+                        <User size={16} /> {t('profile')}
                       </Link>
 
                       <button onClick={toggleTheme} className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary flex items-center gap-2">
                         {effectiveTheme === 'dark' ? <Sun size={16} /> : <Moon size={16} />} 
-                        {effectiveTheme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+                        {effectiveTheme === 'dark' ? t('nav_lightMode') : t('nav_darkMode')}
                       </button>
 
                       <Link to="/settings" onClick={() => setShowDropdown(false)} className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary flex items-center gap-2">
-                        <Settings size={16} /> Settings
+                        <Settings size={16} /> {t('settings')}
                       </Link>
 
                       <div className="border-t border-gray-100 dark:border-gray-800 my-2"></div>
 
                       <Link to="/about" onClick={() => setShowDropdown(false)} className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center gap-2">
-                        <Info size={16} /> About
+                        <Info size={16} /> {t('nav_about')}
                       </Link>
 
                       <div className="border-t border-gray-100 dark:border-gray-800 my-2"></div>
 
                       <button onClick={handleSignOut} className="w-full text-left px-4 py-2 text-sm font-bold text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-2">
-                        <LogOut size={16} /> Sign out
+                        <LogOut size={16} /> {t('nav_signOut')}
                       </button>
                     </div>
                   )}
@@ -201,7 +203,7 @@ const Navbar = () => {
                 to="/login"
                 className="inline-flex items-center px-5 py-2.5 text-sm font-bold rounded-xl text-white bg-primary hover:bg-primary-alt shadow-md hover:shadow-lg transition-all duration-200"
               >
-                Sign In
+                {t('nav_signIn')}
               </Link>
             )}
           </div>

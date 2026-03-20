@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Bot, Send, User } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 const AIChatWidget = () => {
+  const { t } = useLanguage();
   const [message, setMessage] = useState('');
   const [chat, setChat] = useState([]);
 
@@ -15,7 +17,7 @@ const AIChatWidget = () => {
     
     // Placeholder: integrate with real AI backend at POST /api/chat
     setTimeout(() => {
-      setChat(prev => [...prev, { sender: 'bot', text: 'AI service is not yet connected. Please check back later.' }]);
+      setChat(prev => [...prev, { sender: 'bot', text: t('chat_serviceNotConnected') }]);
     }, 500);
   };
 
@@ -24,8 +26,8 @@ const AIChatWidget = () => {
       <div className="p-4 border-b border-gray-100 bg-primary text-white rounded-t-2xl flex items-center gap-3">
         <Bot size={20} />
         <div>
-          <h3 className="font-bold text-sm">AI Assistant</h3>
-          <p className="text-[10px] text-white/80 font-medium tracking-wide border border-white/20 inline-block px-1.5 py-0.5 rounded shadow-sm opacity-90">Powered by OpenAI</p>
+          <h3 className="font-bold text-sm">{t('chat_assistant')}</h3>
+          <p className="text-[10px] text-white/80 font-medium tracking-wide border border-white/20 inline-block px-1.5 py-0.5 rounded shadow-sm opacity-90">{t('chat_poweredBy')}</p>
         </div>
       </div>
       
@@ -53,7 +55,7 @@ const AIChatWidget = () => {
           <input
             type="text"
             className="w-full bg-gray-50 border border-gray-200 rounded-xl py-2.5 pl-4 pr-12 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-shadow"
-            placeholder="Type your request..."
+            placeholder={t('chat_typeRequest')}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}

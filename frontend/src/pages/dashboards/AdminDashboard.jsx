@@ -3,9 +3,11 @@ import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 import { Users, AlertTriangle, ShieldCheck, Activity, MapPin } from 'lucide-react';
 import { getPublicEnv } from '../../lib/env';
+import { useLanguage } from '../../context/LanguageContext';
 
 const AdminDashboard = () => {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const googleMapsApiKey = getPublicEnv('VITE_GOOGLE_CLOUD_API');
   const [metrics, setMetrics] = useState({
     totalUsers: 0,
@@ -57,7 +59,7 @@ const AdminDashboard = () => {
             time: new Date(inc.created_at).toLocaleString(),
             type: inc.urgency === 'critical' || inc.urgency === 'high' ? 'emergency' : 'system',
             text: inc.title,
-            user: `Status: ${inc.status}`
+            user: `${t('admin_status')}${inc.status}`
           })));
         }
       } catch (err) {
@@ -76,14 +78,14 @@ const AdminDashboard = () => {
         <div>
           <h1 className="text-3xl font-extrabold text-dark tracking-tight flex items-center gap-3">
             <ShieldCheck className="text-primary w-8 h-8" />
-            Admin Command Center
+            {t('admin_title')}
           </h1>
-          <p className="text-gray-500 mt-2 font-medium">Real-time platform overview and incident tracking.</p>
+          <p className="text-gray-500 mt-2 font-medium">{t('admin_subtitle')}</p>
         </div>
         <div className="px-4 py-2 bg-green-50 text-green-600 font-bold rounded-xl border border-green-200 flex items-center gap-2">
           <span className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse relative">
              <span className="absolute inset-0 rounded-full bg-green-400 animate-ping opacity-75"></span>
-          </span> Platform Active
+          </span> {t('admin_platformActive')}
         </div>
       </header>
 
@@ -94,7 +96,7 @@ const AdminDashboard = () => {
             <Users size={28} />
           </div>
           <div>
-            <p className="text-sm font-bold text-gray-400 uppercase tracking-wider">Total Registered Users</p>
+            <p className="text-sm font-bold text-gray-400 uppercase tracking-wider">{t('admin_totalUsers')}</p>
             <h2 className="text-3xl font-extrabold text-dark">{loading ? '...' : metrics.totalUsers.toLocaleString()}</h2>
           </div>
         </div>
@@ -104,7 +106,7 @@ const AdminDashboard = () => {
             <ShieldCheck size={28} />
           </div>
           <div>
-            <p className="text-sm font-bold text-gray-400 uppercase tracking-wider">Active Volunteers</p>
+            <p className="text-sm font-bold text-gray-400 uppercase tracking-wider">{t('admin_activeVolunteers')}</p>
             <h2 className="text-3xl font-extrabold text-dark">{loading ? '...' : metrics.volunteers.toLocaleString()}</h2>
           </div>
         </div>
@@ -114,7 +116,7 @@ const AdminDashboard = () => {
             <AlertTriangle size={28} />
           </div>
           <div>
-            <p className="text-sm font-bold text-gray-400 uppercase tracking-wider">Live Incident Events</p>
+            <p className="text-sm font-bold text-gray-400 uppercase tracking-wider">{t('admin_liveEvents')}</p>
             <h2 className="text-3xl font-extrabold text-dark">{loading ? '...' : metrics.events.toLocaleString()}</h2>
           </div>
         </div>
@@ -127,15 +129,15 @@ const AdminDashboard = () => {
           <div className="p-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
              <h3 className="font-bold text-dark flex items-center gap-2">
                 <MapPin size={18} className="text-secondary" />
-                Live Incident Map
+                {t('admin_liveMap')}
              </h3>
-             <span className="text-xs bg-dark text-white px-2 py-1 rounded font-bold uppercase tracking-wider">Tracking {metrics.events} Active</span>
+             <span className="text-xs bg-dark text-white px-2 py-1 rounded font-bold uppercase tracking-wider">{t('admin_tracking')} {metrics.events} {t('admin_active')}</span>
           </div>
           <div className="flex-1 relative">
             <button
                onClick={handleLocateMap}
                className="absolute z-10 bottom-6 right-6 bg-white dark:bg-gray-800 p-3 rounded-full shadow-lg text-dark dark:text-white border border-gray-100 dark:border-gray-700 hover:text-primary dark:hover:text-primary transition-all focus:outline-none hover:scale-110 flex items-center justify-center group"
-               title="Move to current location"
+               title={t('routing_moveToLoc')}
             >
                <MapPin size={22} className="group-hover:animate-bounce" />
             </button>
@@ -155,12 +157,12 @@ const AdminDashboard = () => {
         {/* Live Event Feed */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col h-[600px]">
           <div className="p-4 border-b border-gray-100 bg-gray-50">
-             <h3 className="font-bold text-dark">Recent Activity Feed</h3>
+             <h3 className="font-bold text-dark">{t('admin_recentFeed')}</h3>
           </div>
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
              {recentActivity.length === 0 && !loading ? (
                <div className="text-center py-16">
-                 <p className="text-gray-400 font-medium">No recent activity recorded.</p>
+                 <p className="text-gray-400 font-medium">{t('admin_noRecentActivity')}</p>
                </div>
              ) : recentActivity.map((log, idx) => (
                 <div key={idx} className="flex gap-3 bg-gray-50 border border-gray-100 p-3 rounded-xl border-l-4 border-l-primary hover:bg-gray-100 transition">
